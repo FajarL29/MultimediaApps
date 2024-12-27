@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:multimedia_apps/core/constant/app_color.dart';
+import 'package:multimedia_apps/core/extension/extension.dart';
 import 'package:multimedia_apps/core/service/read_airquality.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/air_temp.dart';
-import 'package:multimedia_apps/presentation/widget/airquality/co2widget.dart';
-import 'package:multimedia_apps/presentation/widget/airquality/cowidget.dart';
+import 'package:multimedia_apps/presentation/widget/airquality/gaugewidget.dart';
+import 'package:weather/weather.dart';
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -82,6 +84,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
       backgroundColor: AppStaticColors.toastColor,
       body: Container(
         decoration: BoxDecoration(
+            backgroundBlendMode: BlendMode.colorBurn,
             gradient: RadialGradient(
                 colors: [Colors.black, Colors.blue, Colors.black])),
         child: Column(children: [
@@ -133,7 +136,6 @@ class _AirQualityAppState extends State<AirQualityApp> {
                               temperature: _currenttemp,
                               isCelsius: true,
                             ),
-                            Co2Widget(cO2rate: 600)
                           ]),
                     ),
                   ),
@@ -149,28 +151,64 @@ class _AirQualityAppState extends State<AirQualityApp> {
                               temperature: _currenttemp,
                               isCelsius: true,
                             ),
-                            CoWidget(cOrate: 600)
-                          ]),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AirTemperatureWidget(
-                              temperature: _currenttemp,
-                              isCelsius: true,
-                            ),
-                            Co2Widget(cO2rate: 600)
                           ]),
                     ),
                   ),
                 ],
               )),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                Colors.black26,
+                Colors.blue,
+                AppStaticColors.lightBlack,
+                Colors.blue,
+                Colors.black26
+              ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                          flex: 1,
+                          child: GaugeWidget(
+                            aqvalue: _currentco,
+                            minValue: 0,
+                            maxValue: 25,
+                            stdLowValue: 9,
+                            stdMaxValue: 15,
+                            gaugetitle: 'CO level (ppm)',
+                          )),
+                      Expanded(
+                          flex: 1,
+                          child: GaugeWidget(
+                            aqvalue: _currentco2,
+                            minValue: 0,
+                            maxValue: 2500,
+                            stdLowValue: 600,
+                            stdMaxValue: 1500,
+                            gaugetitle: 'CO2 level (ppm)',
+                          )),
+                      Expanded(
+                          flex: 1,
+                          child: GaugeWidget(
+                            aqvalue: _currentpm,
+                            minValue: 0,
+                            maxValue: 40,
+                            stdLowValue: 20,
+                            stdMaxValue: 35,
+                            gaugetitle: 'PM2.5 level (µg/m³)',
+                          )),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Row(
+            children: [AirTemperatureWidget(temperature: 100)],
+          )
         ]),
       ),
     );

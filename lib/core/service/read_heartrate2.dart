@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 class HeartRateService2 {
-  final SerialPort _port = SerialPort('COM6'); // Replace with your port
+  final SerialPort _port =
+      SerialPort('/dev/ttyAMA10'); // Replace with your port
   late SerialPortReader _reader;
   final StreamController<int> _heartRateController =
       StreamController<int>.broadcast();
