@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:multimedia_apps/core/constant/app_color.dart';
-import 'package:multimedia_apps/core/extension/extension.dart';
 import 'package:multimedia_apps/core/service/read_airquality.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/air_temp.dart';
+import 'package:multimedia_apps/presentation/widget/airquality/cardwidget.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/gaugewidget.dart';
-import 'package:weather/weather.dart';
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -125,33 +123,22 @@ class _AirQualityAppState extends State<AirQualityApp> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AirTemperatureWidget(
-                              temperature: _currenttemp,
-                              isCelsius: true,
-                            ),
-                          ]),
+                    child: Cardwidget(
+                      parameterName: 'Air Temperature',
+                      value: _currenttemp,
+                      unit: '°C',
+                      icon: Icons.thermostat,
+                      isAlert: false,
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AirTemperatureWidget(
-                              temperature: _currenttemp,
-                              isCelsius: true,
-                            ),
-                          ]),
+                    child: Cardwidget(
+                      parameterName: 'Humidity',
+                      value: 80.0,
+                      unit: '%',
+                      icon: Icons.water_drop,
+                      isAlert: true,
+                      alertMessage: 'High Humidity!',
                     ),
                   ),
                 ],

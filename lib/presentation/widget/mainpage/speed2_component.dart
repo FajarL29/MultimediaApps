@@ -26,23 +26,25 @@ class _SpeedDashboardState extends State<SpeedDashboard> {
                   image: AssetImage('assets/images/speed_background.jpg'),
                   fit: BoxFit.fill)),
           child: SfRadialGauge(
+            enableLoadingAnimation: true,
+            animationDuration: 1500,
             axes: <RadialAxis>[
               RadialAxis(
                 startAngle: 130,
                 endAngle: 340,
                 minimum: 0,
-                maximum: 150,
+                maximum: 165,
+                axisLineStyle: AxisLineStyle(thickness: 20),
                 axisLabelStyle:
                     GaugeTextStyle(color: Colors.white, fontSize: 20),
                 ranges: <GaugeRange>[
                   GaugeRange(
-                    startValue: 0,
-                    endValue: 50,
-                    sizeUnit: GaugeSizeUnit.logicalPixel,
-                    color: AppStaticColors.greyShadowPrimary,
-                    startWidth: 10,
-                    endWidth: 20,
-                  ),
+                      startValue: 0,
+                      endValue: 50,
+                      sizeUnit: GaugeSizeUnit.logicalPixel,
+                      color: AppStaticColors.green,
+                      startWidth: 10,
+                      endWidth: 10),
                   GaugeRange(
                       startValue: 50,
                       endValue: 100,
@@ -51,19 +53,26 @@ class _SpeedDashboardState extends State<SpeedDashboard> {
                       endWidth: 10),
                   GaugeRange(
                       startValue: 100,
-                      endValue: 150,
+                      endValue: 165,
                       color: Colors.red,
                       startWidth: 10,
                       endWidth: 10)
                 ],
-                pointers: <GaugePointer>[NeedlePointer(value: _speed)],
+                pointers: <GaugePointer>[
+                  NeedlePointer(
+                    value: _speed,
+                    knobStyle: KnobStyle(color: AppStaticColors.lightOrange),
+                    tailStyle: TailStyle(color: AppStaticColors.grey),
+                    needleColor: AppStaticColors.grey,
+                  )
+                ],
                 annotations: <GaugeAnnotation>[
                   GaugeAnnotation(
                       widget: Text('${_speed.toStringAsFixed(0)} KM/H',
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black)),
+                              color: AppStaticColors.lightOrange)),
                       angle: 90,
                       positionFactor: 0.5)
                 ],
