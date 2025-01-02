@@ -29,6 +29,8 @@ class GaugeWidget extends StatelessWidget {
             color: Colors.black,
           ),
           child: SfRadialGauge(
+            title: GaugeTitle(
+                text: gaugetitle, textStyle: TextStyle(color: Colors.white)),
             enableLoadingAnimation: true,
             animationDuration: 1500,
             axes: <RadialAxis>[

@@ -127,8 +127,12 @@ class _AirQualityAppState extends State<AirQualityApp> {
                       parameterName: 'Air Temperature',
                       value: _currenttemp,
                       unit: '°C',
-                      icon: Icons.thermostat,
-                      isAlert: false,
+                      icon: Icon(
+                        Icons.thermostat,
+                        color: Colors.blue,
+                      ),
+                      isAlert: true,
+                      alertMessage: 'normal temperature',
                     ),
                   ),
                   Expanded(
@@ -136,7 +140,9 @@ class _AirQualityAppState extends State<AirQualityApp> {
                       parameterName: 'Humidity',
                       value: 80.0,
                       unit: '%',
-                      icon: Icons.water_drop,
+                      icon: Icon(
+                        Icons.water_drop,
+                      ),
                       isAlert: true,
                       alertMessage: 'High Humidity!',
                     ),
@@ -187,6 +193,16 @@ class _AirQualityAppState extends State<AirQualityApp> {
                             stdMaxValue: 35,
                             gaugetitle: 'PM2.5 level (µg/m³)',
                           )),
+                      Expanded(
+                          flex: 1,
+                          child: GaugeWidget(
+                            aqvalue: _currentpm,
+                            minValue: 0,
+                            maxValue: 40,
+                            stdLowValue: 20,
+                            stdMaxValue: 35,
+                            gaugetitle: 'PM10 level (µg/m³)',
+                          ))
                     ],
                   ),
                 ],
