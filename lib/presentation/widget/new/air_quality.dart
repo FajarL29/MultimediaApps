@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multimedia_apps/core/constant/app_color.dart';
 import 'package:multimedia_apps/core/service/read_airquality.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/air_temp.dart';
+import 'package:multimedia_apps/presentation/widget/airquality/airqualitywidget.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/cardwidget.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/gaugewidget.dart';
 
@@ -22,7 +23,8 @@ class _AirQualityAppState extends State<AirQualityApp> {
   late ReadAirquality _airqualityService;
   double _currentco = 0;
   double _currentco2 = 0;
-  double _currentpm = 0;
+  double _currentpm25 = 0;
+  double _currentpm10 = 0;
   double _currenttemp = 0;
   double _currento2 = 0;
   double _currenthum = 0;
@@ -45,9 +47,15 @@ class _AirQualityAppState extends State<AirQualityApp> {
       });
     });
 
-    _airqualityService.pmStream.listen((pm) {
+    _airqualityService.pmStream.listen((pm25) {
       setState(() {
-        _currentpm = pm;
+        _currentpm25 = pm25;
+      });
+    });
+
+    _airqualityService.pmStream.listen((pm10) {
+      setState(() {
+        _currentpm25 = pm10;
       });
     });
 
@@ -147,6 +155,21 @@ class _AirQualityAppState extends State<AirQualityApp> {
                       alertMessage: 'High Humidity!',
                     ),
                   ),
+                  Expanded(
+                    child: Cardwidget(
+                      parameterName: 'O2 Level',
+                      value: 80.0,
+                      unit: '%',
+                      icon: Image.asset(
+                        "assets/images/oxygen.png",
+                        width: 30,
+                        color: Colors.blue,
+                      ) // Optional: Apply a color tint
+                      ,
+                      isAlert: true,
+                      alertMessage: 'High Humidity!',
+                    ),
+                  ),
                 ],
               )),
           Expanded(
@@ -186,7 +209,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
                       Expanded(
                           flex: 1,
                           child: GaugeWidget(
-                            aqvalue: _currentpm,
+                            aqvalue: _currentpm25,
                             minValue: 0,
                             maxValue: 40,
                             stdLowValue: 20,
@@ -196,7 +219,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
                       Expanded(
                           flex: 1,
                           child: GaugeWidget(
-                            aqvalue: _currentpm,
+                            aqvalue: _currentpm10,
                             minValue: 0,
                             maxValue: 40,
                             stdLowValue: 20,
@@ -209,8 +232,15 @@ class _AirQualityAppState extends State<AirQualityApp> {
               ),
             ),
           ),
-          Row(
-            children: [AirTemperatureWidget(temperature: 100)],
+          Expanded(
+            child: AQGaugeWidget(
+                aqvalue: 100,
+                gaugetitle: 'Air Quality ',
+                maxValue: 1000,
+                minValue: 0,
+                goodMaxValue: 60,
+                moderateMaxValue: 500,
+                seriousMaxValue: 600),
           )
         ]),
       ),

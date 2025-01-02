@@ -5,7 +5,7 @@ class Cardwidget extends StatelessWidget {
       parameterName; // Name of the parameter (e.g., "Temperature", "Humidity")
   final double value; // Value of the parameter
   final String unit; // Unit of the parameter (e.g., "°C", "%")
-  final Icon icon; // Icon to display
+  final Widget icon; // Icon to display
   final bool isAlert; // Flag to indicate if the value is in alert range
   final String? alertMessage; // Optional message to display in case of alert
 
