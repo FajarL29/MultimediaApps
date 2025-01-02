@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:multimedia_apps/core/constant/app_color.dart';
-import 'package:multimedia_apps/core/extension/extension.dart';
 import 'package:multimedia_apps/core/service/read_airquality.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/air_temp.dart';
+import 'package:multimedia_apps/presentation/widget/airquality/airqualitywidget.dart';
+import 'package:multimedia_apps/presentation/widget/airquality/cardwidget.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/gaugewidget.dart';
-import 'package:weather/weather.dart';
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +23,8 @@ class _AirQualityAppState extends State<AirQualityApp> {
   late ReadAirquality _airqualityService;
   double _currentco = 0;
   double _currentco2 = 0;
-  double _currentpm = 0;
+  double _currentpm25 = 0;
+  double _currentpm10 = 0;
   double _currenttemp = 0;
   double _currento2 = 0;
   double _currenthum = 0;
@@ -47,9 +47,15 @@ class _AirQualityAppState extends State<AirQualityApp> {
       });
     });
 
-    _airqualityService.pmStream.listen((pm) {
+    _airqualityService.pmStream.listen((pm25) {
       setState(() {
-        _currentpm = pm;
+        _currentpm25 = pm25;
+      });
+    });
+
+    _airqualityService.pmStream.listen((pm10) {
+      setState(() {
+        _currentpm25 = pm10;
       });
     });
 
@@ -125,33 +131,43 @@ class _AirQualityAppState extends State<AirQualityApp> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
+                    child: Cardwidget(
+                      parameterName: 'Air Temperature',
+                      value: _currenttemp,
+                      unit: '°C',
+                      icon: Icon(
+                        Icons.thermostat,
+                        color: Colors.blue,
                       ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AirTemperatureWidget(
-                              temperature: _currenttemp,
-                              isCelsius: true,
-                            ),
-                          ]),
+                      isAlert: true,
+                      alertMessage: 'normal temperature',
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
+                    child: Cardwidget(
+                      parameterName: 'Humidity',
+                      value: 80.0,
+                      unit: '%',
+                      icon: Icon(
+                        Icons.water_drop,
                       ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AirTemperatureWidget(
-                              temperature: _currenttemp,
-                              isCelsius: true,
-                            ),
-                          ]),
+                      isAlert: true,
+                      alertMessage: 'High Humidity!',
+                    ),
+                  ),
+                  Expanded(
+                    child: Cardwidget(
+                      parameterName: 'O2 Level',
+                      value: 80.0,
+                      unit: '%',
+                      icon: Image.asset(
+                        "assets/images/oxygen.png",
+                        width: 30,
+                        color: Colors.blue,
+                      ) // Optional: Apply a color tint
+                      ,
+                      isAlert: true,
+                      alertMessage: 'High Humidity!',
                     ),
                   ),
                 ],
@@ -193,21 +209,38 @@ class _AirQualityAppState extends State<AirQualityApp> {
                       Expanded(
                           flex: 1,
                           child: GaugeWidget(
-                            aqvalue: _currentpm,
+                            aqvalue: _currentpm25,
                             minValue: 0,
                             maxValue: 40,
                             stdLowValue: 20,
                             stdMaxValue: 35,
                             gaugetitle: 'PM2.5 level (µg/m³)',
                           )),
+                      Expanded(
+                          flex: 1,
+                          child: GaugeWidget(
+                            aqvalue: _currentpm10,
+                            minValue: 0,
+                            maxValue: 40,
+                            stdLowValue: 20,
+                            stdMaxValue: 35,
+                            gaugetitle: 'PM10 level (µg/m³)',
+                          ))
                     ],
                   ),
                 ],
               ),
             ),
           ),
-          Row(
-            children: [AirTemperatureWidget(temperature: 100)],
+          Expanded(
+            child: AQGaugeWidget(
+                aqvalue: 100,
+                gaugetitle: 'Air Quality ',
+                maxValue: 1000,
+                minValue: 0,
+                goodMaxValue: 60,
+                moderateMaxValue: 500,
+                seriousMaxValue: 600),
           )
         ]),
       ),
