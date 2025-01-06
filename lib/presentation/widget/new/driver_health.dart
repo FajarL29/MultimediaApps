@@ -25,8 +25,8 @@ class HeartRateApp extends StatefulWidget {
 class _HeartRateAppState extends State<HeartRateApp> {
   late HeartRateService2 _heartRateService;
   double _currentTemperature = 0;
-  double _sistole = 0;
-  double _diastole = 0;
+  int _sistole = 0;
+  int _diastole = 0;
   int _currentspo2 = 0;
   int _currentRR = 0;
 

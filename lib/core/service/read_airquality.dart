@@ -3,7 +3,7 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 class ReadAirquality {
   final SerialPort _port =
-      SerialPort('/dev/ttyAMA10'); // Replace with your port
+      SerialPort('COM13'); // Replace with your port
   late SerialPortReader _reader;
   final StreamController<double> _coController =
       StreamController<double>.broadcast();
@@ -72,7 +72,7 @@ class ReadAirquality {
         case 'CO2':
           double? co2 = double.tryParse(line[1]);
           if (co2 != null) {
-            _coController.add(co2); // EspO2 heart rate
+            _co2Controller.add(co2); // EspO2 heart rate
             print("SPO2 Stream emitted: $co2");
           } else {
             print("Invalid or incomplete data: $line");
@@ -109,7 +109,7 @@ class ReadAirquality {
         case 'HUM':
           double? hum = double.tryParse(line[1]);
           if (hum != null) {
-            _o2Controller.add(hum); // EspO2 heart rate
+            _humController.add(hum); // EspO2 heart rate
             print("SPO2 Stream emitted: $hum");
           } else {
             print("Invalid or incomplete data: $line");

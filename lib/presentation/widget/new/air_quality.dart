@@ -49,7 +49,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
 
     _airqualityService.pmStream.listen((pm25) {
       setState(() {
-        _currentpm25 = pm25;
+        _currentpm25 = pm25.toDouble();
       });
     });
 
@@ -67,13 +67,13 @@ class _AirQualityAppState extends State<AirQualityApp> {
 
     _airqualityService.o2Stream.listen((o2) {
       setState(() {
-        _currento2 = o2;
+        _currento2 = o2.toDouble();
       });
     });
 
     _airqualityService.humStream.listen((hum) {
       setState(() {
-        _currenthum = hum;
+        _currenthum = hum.toDouble();
       });
     });
   }
@@ -146,7 +146,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
                   Expanded(
                     child: Cardwidget(
                       parameterName: 'Humidity',
-                      value: 80.0,
+                      value: _currenthum,
                       unit: '%',
                       icon: Icon(
                         Icons.water_drop,
@@ -158,7 +158,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
                   Expanded(
                     child: Cardwidget(
                       parameterName: 'O2 Level',
-                      value: 80.0,
+                      value: _currento2,
                       unit: '%',
                       icon: Image.asset(
                         "assets/images/oxygen.png",
@@ -167,7 +167,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
                       ) // Optional: Apply a color tint
                       ,
                       isAlert: true,
-                      alertMessage: 'High Humidity!',
+                      alertMessage: 'High Oxygen!',
                     ),
                   ),
                 ],
