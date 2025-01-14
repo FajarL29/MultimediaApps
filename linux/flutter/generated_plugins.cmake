@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  embedded_serialport
   flutter_libserialport
   url_launcher_linux
 )
