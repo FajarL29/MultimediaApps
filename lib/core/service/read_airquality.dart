@@ -74,7 +74,10 @@ class ReadAirQuality {
           _coController.add(value);
           break;
         case 'CO2':
+
           _co2Controller.add(value);
+
+
           break;
         case 'PM25':
           _pm25Controller.add(value);
@@ -89,7 +92,10 @@ class ReadAirQuality {
           _o2Controller.add(value);
           break;
         case 'HUM':
+
           _humController.add(value);
+
+
           break;
         default:
           print("Unknown key: $key");
