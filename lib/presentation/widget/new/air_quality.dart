@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multimedia_apps/core/constant/app_color.dart';
 import 'package:multimedia_apps/core/service/read_airquality.dart';
-import 'package:multimedia_apps/presentation/widget/airquality/air_temp.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/airqualitywidget.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/cardwidget.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/gaugewidget.dart';
@@ -20,7 +19,7 @@ class AirQualityApp extends StatefulWidget {
 }
 
 class _AirQualityAppState extends State<AirQualityApp> {
-  late ReadAirquality _airqualityService;
+  late ReadAirQuality _airqualityService;
   double _currentco = 0;
   double _currentco2 = 0;
   double _currentpm25 = 0;
@@ -32,7 +31,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
   @override
   void initState() {
     super.initState();
-    _airqualityService = ReadAirquality();
+    _airqualityService = ReadAirQuality();
     _airqualityService.startListening();
 
     _airqualityService.coStream.listen((co) {
@@ -47,15 +46,15 @@ class _AirQualityAppState extends State<AirQualityApp> {
       });
     });
 
-    _airqualityService.pmStream.listen((pm25) {
+    _airqualityService.pm25Stream.listen((pm25) {
       setState(() {
         _currentpm25 = pm25;
       });
     });
 
-    _airqualityService.pmStream.listen((pm10) {
+    _airqualityService.pm10Stream.listen((pm10) {
       setState(() {
-        _currentpm25 = pm10;
+        _currentpm10 = pm10;
       });
     });
 
@@ -146,19 +145,19 @@ class _AirQualityAppState extends State<AirQualityApp> {
                   Expanded(
                     child: Cardwidget(
                       parameterName: 'Humidity',
-                      value: 80.0,
+                      value: _currenthum,
                       unit: '%',
                       icon: Icon(
                         Icons.water_drop,
                       ),
                       isAlert: true,
-                      alertMessage: 'High Humidity!',
+                      //alertMessage: 'High Humidity!',
                     ),
                   ),
                   Expanded(
                     child: Cardwidget(
                       parameterName: 'O2 Level',
-                      value: 80.0,
+                      value: _currento2,
                       unit: '%',
                       icon: Image.asset(
                         "assets/images/oxygen.png",
@@ -167,7 +166,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
                       ) // Optional: Apply a color tint
                       ,
                       isAlert: true,
-                      alertMessage: 'High Humidity!',
+                      //alertMessage: 'High Humidity!',
                     ),
                   ),
                 ],
@@ -232,16 +231,16 @@ class _AirQualityAppState extends State<AirQualityApp> {
               ),
             ),
           ),
-          Expanded(
-            child: AQGaugeWidget(
-                aqvalue: 100,
-                gaugetitle: 'Air Quality ',
-                maxValue: 1000,
-                minValue: 0,
-                goodMaxValue: 60,
-                moderateMaxValue: 500,
-                seriousMaxValue: 600),
-          )
+          // Expanded(
+          //   child: AQGaugeWidget(
+          //       aqvalue: 100,
+          //       gaugetitle: 'Air Quality ',
+          //       maxValue: 1000,
+          //       minValue: 0,
+          //       goodMaxValue: 60,
+          //       moderateMaxValue: 500,
+          //       seriousMaxValue: 600),
+          // )
         ]),
       ),
     );

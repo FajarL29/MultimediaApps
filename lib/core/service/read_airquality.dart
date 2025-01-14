@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 
-class ReadAirquality {
-  final SerialPort _port =
-      SerialPort('/dev/ttyAMA10'); // Replace with your port
-  late SerialPortReader _reader;
+class ReadAirQuality {
+  final SerialPort _port = SerialPort('/dev/ttyACM0'); // Replace with your port
+  String rawData = '';
+  String status = 'Connecting...';
+
   final StreamController<double> _coController =
       StreamController<double>.broadcast();
   final StreamController<double> _co2Controller =
       StreamController<double>.broadcast();
-  final StreamController<double> _pMController =
+  final StreamController<double> _pm25Controller =
+      StreamController<double>.broadcast();
+  final StreamController<double> _pm10Controller =
       StreamController<double>.broadcast();
   final StreamController<double> _tempController =
       StreamController<double>.broadcast();
@@ -17,115 +20,90 @@ class ReadAirquality {
       StreamController<double>.broadcast();
   final StreamController<double> _humController =
       StreamController<double>.broadcast();
-  String rawData = '';
 
-  ReadAirquality();
-
-  // Expose the stream for widgets to listen to
+  // Expose streams for UI
   Stream<double> get coStream => _coController.stream;
   Stream<double> get co2Stream => _co2Controller.stream;
-  Stream<double> get pmStream => _pMController.stream;
+  Stream<double> get pm25Stream => _pm25Controller.stream;
+  Stream<double> get pm10Stream => _pm10Controller.stream;
   Stream<double> get tempStream => _tempController.stream;
   Stream<double> get o2Stream => _o2Controller.stream;
   Stream<double> get humStream => _humController.stream;
 
   void startListening() {
     try {
-      final config = _port.config;
-      config.baudRate = 115200; // Replace with your desired baud rate
-      _port.config = config;
+      if (_port.openReadWrite()) {
+        status = 'Port opened successfully!';
+        print(status); // Print status for debugging
 
-      if (!_port.openReadWrite()) {
-        throw Exception('Failed to open port');
+        var reader = SerialPortReader(_port);
+        reader.stream.listen((data) {
+          rawData += String.fromCharCodes(data); // Append new data chunk
+          processRawData(); // Process complete lines
+        });
+      } else {
+        status = 'Failed to open port: ${SerialPort.lastError}';
+        print(status); // Print error status
       }
-
-      _reader = SerialPortReader(_port);
-      _reader.stream.listen((data) {
-        rawData += String.fromCharCodes(data); // Append new data chunk
-        processRawData(); // Process complete lines
-      });
-    } catch (e) {
-      print('Error during port setup: $e');
+    } on SerialPortError catch (e) {
+      status = 'Error: ${e.message}';
+      print(status); // Print error message
     }
   }
 
   void processRawData() {
-    // Split the data into lines (assuming '\n' is the delimiter)
     final lines = rawData.split('\n');
 
-    // Process all complete lines except the last one (it may be incomplete)
     for (int i = 0; i < lines.length - 1; i++) {
-      final line = lines[i].split(':');
+      final lineParts = lines[i].split(':');
+      if (lineParts.length < 2) {
+        print("Invalid data format: ${lines[i]}");
+        continue;
+      }
 
-      final String check = line[0].trim();
+      final String key = lineParts[0].trim();
+      final double? value = double.tryParse(lineParts[1].trim());
 
-      switch (check) {
+      if (value == null) {
+        print("Invalid or missing value: ${lines[i]}");
+        continue;
+      }
+
+      switch (key) {
         case 'CO':
-          double? co = double.tryParse(line[1]);
-          if (co != null) {
-            _coController.add(co); // Emit valid heart rate
-            print("Heart Rate Stream emitted: $co");
-          } else {
-            print("Invalid or incomplete data: $line");
-          }
+          _coController.add(value);
           break;
         case 'CO2':
-          double? co2 = double.tryParse(line[1]);
-          if (co2 != null) {
-            _coController.add(co2); // EspO2 heart rate
-            print("SPO2 Stream emitted: $co2");
-          } else {
-            print("Invalid or incomplete data: $line");
-          }
+          _co2Controller.add(value);
           break;
-        case 'PM':
-          double? pm = double.tryParse(line[1]);
-          if (pm != null) {
-            _pMController.add(pm); // Emit valid heart rate
-            print("Heart Rate Stream emitted: $pm");
-          } else {
-            print("Invalid or incomplete data: $line");
-          }
+        case 'PM25':
+          _pm25Controller.add(value);
+          break;
+        case 'PM10':
+          _pm10Controller.add(value);
           break;
         case 'TEMP':
-          double? temp = double.tryParse(line[1]);
-          if (temp != null) {
-            _tempController.add(temp); // EspO2 heart rate
-            print("SPO2 Stream emitted: $temp");
-          } else {
-            print("Invalid or incomplete data: $line");
-          }
+          _tempController.add(value);
           break;
         case 'O2':
-          double? o2 = double.tryParse(line[1]);
-          if (o2 != null) {
-            _o2Controller.add(o2); // EspO2 heart rate
-            print("SPO2 Stream emitted: $o2");
-          } else {
-            print("Invalid or incomplete data: $line");
-          }
+          _o2Controller.add(value);
           break;
-
         case 'HUM':
-          double? hum = double.tryParse(line[1]);
-          if (hum != null) {
-            _o2Controller.add(hum); // EspO2 heart rate
-            print("SPO2 Stream emitted: $hum");
-          } else {
-            print("Invalid or incomplete data: $line");
-          }
+          _humController.add(value);
           break;
-      } // Remove any extra whitespace
+        default:
+          print("Unknown key: $key");
+      }
     }
 
-    // Retain the last (incomplete) line in rawData
-    rawData = lines.last;
+    rawData = lines.last; // Retain incomplete data
   }
 
   void dispose() {
     _coController.close();
     _co2Controller.close();
-    _pMController.close();
+    _pm25Controller.close();
+    _pm10Controller.close();
     _tempController.close();
     _o2Controller.close();
     _humController.close();

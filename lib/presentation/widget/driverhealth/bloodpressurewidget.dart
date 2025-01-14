@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BloodPressureWidget extends StatelessWidget {
-  final double systolic; // Systolic pressure (mmHg)
-  final double diastolic; // Diastolic pressure (mmHg)
+  final int systolic; // Systolic pressure (mmHg)
+  final int diastolic; // Diastolic pressure (mmHg)
 
   const BloodPressureWidget({
     required this.systolic,
