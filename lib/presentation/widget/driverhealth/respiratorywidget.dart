@@ -18,7 +18,7 @@ class RespirationRateWidget extends StatelessWidget {
           children: [
             const Text(
               textAlign: TextAlign.center,
-              'Respiration Rate',
+              'Respiration Rate''\n',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),

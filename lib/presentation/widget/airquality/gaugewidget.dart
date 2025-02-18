@@ -23,23 +23,27 @@ class GaugeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Stack(children: [
-        Container(
+          Container(
+          width: 300.0,  // Atur lebar lingkaran
+          height: 300.0, // Atur tinggi lingkaran
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.black,
+            
           ),
           child: SfRadialGauge(
+            
             title: GaugeTitle(
-                text: gaugetitle, textStyle: TextStyle(color: Colors.white)),
+                text: gaugetitle, textStyle: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
             enableLoadingAnimation: true,
             animationDuration: 1500,
             axes: <RadialAxis>[
               RadialAxis(
-                axisLineStyle:
-                    const AxisLineStyle(color: Colors.black, thickness: 25),
-                axisLabelStyle: const GaugeTextStyle(color: Colors.white),
+                axisLineStyle: AxisLineStyle(color: Colors.black, thickness: 20),
+                axisLabelStyle: GaugeTextStyle(color: Colors.white),
                 minimum: minValue,
                 maximum: maxValue,
+                
                 ranges: <GaugeRange>[
                   GaugeRange(
                     gradient: const SweepGradient(colors: [

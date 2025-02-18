@@ -20,40 +20,42 @@ class _SpeedDashboardState extends State<SpeedDashboard> {
           height: double.infinity,
           width: double.infinity,
           decoration: BoxDecoration(
-              color: Colors.white,
               shape: BoxShape.circle,
-              image: DecorationImage(
-                  image: AssetImage('assets/images/speed_background.jpg'),
-                  fit: BoxFit.fill)),
+              color: Color.fromARGB(255, 0, 0, 0),
+              // image: DecorationImage(
+              //   image: AssetImage('assets/images/speed_background.jpg'),
+              //   fit: BoxFit.fill,
+              // )                 
+               ),
           child: SfRadialGauge(
             enableLoadingAnimation: true,
             animationDuration: 1500,
             axes: <RadialAxis>[
               RadialAxis(
-                startAngle: 130,
-                endAngle: 340,
+                startAngle: 110,
+                endAngle: 430,
                 minimum: 0,
-                maximum: 165,
+                maximum: 220,
                 axisLineStyle: AxisLineStyle(thickness: 20),
                 axisLabelStyle:
                     GaugeTextStyle(color: Colors.white, fontSize: 20),
                 ranges: <GaugeRange>[
                   GaugeRange(
                       startValue: 0,
-                      endValue: 50,
+                      endValue: 60,
                       sizeUnit: GaugeSizeUnit.logicalPixel,
                       color: AppStaticColors.green,
                       startWidth: 10,
                       endWidth: 10),
                   GaugeRange(
-                      startValue: 50,
-                      endValue: 100,
+                      startValue: 60,
+                      endValue: 120,
                       color: Colors.orange,
                       startWidth: 10,
                       endWidth: 10),
                   GaugeRange(
-                      startValue: 100,
-                      endValue: 165,
+                      startValue: 120,
+                      endValue: 220,
                       color: Colors.red,
                       startWidth: 10,
                       endWidth: 10)
@@ -70,7 +72,7 @@ class _SpeedDashboardState extends State<SpeedDashboard> {
                   GaugeAnnotation(
                       widget: Text('${_speed.toStringAsFixed(0)} KM/H',
                           style: TextStyle(
-                              fontSize: 20,
+                              fontSize:   18,
                               fontWeight: FontWeight.bold,
                               color: AppStaticColors.lightOrange)),
                       angle: 90,

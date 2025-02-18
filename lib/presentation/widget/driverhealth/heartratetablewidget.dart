@@ -89,7 +89,7 @@ class _HeartRateTableWidgetState extends State<HeartRateTableWidget> {
               const Text(
                 'Heart Rate Summary',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -125,7 +125,7 @@ class _HeartRateTableWidgetState extends State<HeartRateTableWidget> {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 18,
             color: Colors.grey,
           ),
         ),

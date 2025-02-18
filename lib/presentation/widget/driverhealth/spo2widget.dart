@@ -17,8 +17,15 @@ class SpO2Widget extends StatelessWidget {
           children: [
             const Text(
               textAlign: TextAlign.center,
-              'SpO2 (Oxygen Saturation)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              'SpO2' ,  
+              
+              style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold ),
+            ),
+            const Text(
+              textAlign: TextAlign.center,
+              
+              '(Oxygen Saturation)',
+              style: TextStyle(fontSize: 17, ),
             ),
             const SizedBox(height: 16),
             Row(
