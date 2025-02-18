@@ -77,7 +77,7 @@ class _HeartRateWidgetState extends State<HeartRateWidget>
           builder: (context, child) {
             return Transform.scale(
               scale: _animation.value,
-              child: Icon(Icons.favorite, color: Colors.red, size: 100),
+              child: Icon(Icons.favorite, color: Colors.red, size: 80),
             );
           },
         ),

@@ -34,10 +34,14 @@ class Cardwidget extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isAlert
-                ? [Colors.red.shade100, Colors.red.shade400]
-                : [Colors.blue.shade100, Colors.blue.shade400],
+                ? [Colors.black, Color.fromARGB(255, 8, 0, 62)]
+                : [Color.fromARGB(255, 8, 0, 62), Colors.black],
           ),
           borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+            color: Colors.white, // Warna border putih
+            width: 1, // Ketebalan border
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -59,14 +63,15 @@ class Cardwidget extends StatelessWidget {
                 icon,
                 const SizedBox(width: 12),
                 Text(
-                  textAlign: TextAlign.center,
-                  '${value.toStringAsFixed(1)}$unit',
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                '${value.toStringAsFixed(1)}$unit',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.lightBlueAccent,
                 ),
+              ),
+
               ],
             ),
             if (alertMessage != null) ...[
@@ -76,7 +81,7 @@ class Cardwidget extends StatelessWidget {
                 alertMessage!,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: Colors.grey,
                 ),
               ),
             ],

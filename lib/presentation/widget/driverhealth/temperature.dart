@@ -28,7 +28,7 @@ class BodyTemperatureWidget extends StatelessWidget {
           children: [
             const Text(
               textAlign: TextAlign.center,
-              'Body Temperature',
+              'Body Temperature''\n',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),

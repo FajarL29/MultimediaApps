@@ -3,9 +3,10 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 class HeartRateService2 {
 
-  final SerialPort _port = SerialPort('/dev/ttyACM0'); // Replace with your port
-  String rawData = '';
-  String status = 'Connecting...';
+  final SerialPort _port =
+      SerialPort('COM17'); // Replace with your port
+  late SerialPortReader _reader;
+
 
 
   final StreamController<int> _heartRateController =

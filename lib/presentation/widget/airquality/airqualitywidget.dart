@@ -29,14 +29,17 @@ class AQGaugeWidget extends StatelessWidget {
           color: Colors.black,
         ),
         child: SfLinearGauge(
+
+          
           orientation: LinearGaugeOrientation.horizontal,
           minimum: minValue,
           maximum: maxValue,
           interval: maxValue / 4,
           minorTicksPerInterval: 4,
           axisTrackStyle: const LinearAxisTrackStyle(
-            thickness: 10,
-            edgeStyle: LinearEdgeStyle.bothCurve,
+            thickness: 20,
+            edgeStyle: LinearEdgeStyle.bothFlat,
+            //color: Colors.black,
             color: Colors.black,
           ),
           barPointers: <LinearBarPointer>[
@@ -44,20 +47,37 @@ class AQGaugeWidget extends StatelessWidget {
               value: aqvalue,
               thickness: 20,
               edgeStyle: LinearEdgeStyle.bothCurve,
-              color: _getPointerColor(aqvalue),
+              color: _getPointerColor(aqvalue), 
+              position: LinearElementPosition.outside, // Bisa diubah ke inside/middle          
             ),
           ],
-          markerPointers: <LinearMarkerPointer>[
+          // markerPointers: <LinearMarkerPointer>[
+          //   LinearShapePointer(
+          //     value: aqvalue,
+          //     shapeType: LinearShapePointerType.circle,
+          //     color: _getPointerColor(aqvalue),
+          //     borderColor: Colors.white,
+          //     borderWidth: 3,
+              
+          //   ),
+          // ],
+          
+            markerPointers: <LinearMarkerPointer>[
             LinearShapePointer(
               value: aqvalue,
               shapeType: LinearShapePointerType.circle,
               color: _getPointerColor(aqvalue),
               borderColor: Colors.white,
-              borderWidth: 2,
+              borderWidth: 3,
+              position: LinearElementPosition.outside, // Bisa diubah ke inside/middle
+              width: 20, // Ukuran lingkaran lebih besar
+              height: 20, // Sesuai dengan width agar tetap lingkaran
             ),
           ],
+
           ranges: <LinearGaugeRange>[
             LinearGaugeRange(
+              edgeStyle: LinearEdgeStyle.startCurve,
               startValue: minValue,
               endValue: goodMaxValue,
               color: Colors.green,
@@ -65,28 +85,35 @@ class AQGaugeWidget extends StatelessWidget {
               endWidth: 20,
             ),
             LinearGaugeRange(
+              
               startValue: goodMaxValue,
-              endValue: moderateMaxValue,
+              endValue: moderateMaxValue+2,
               color: Colors.orange,
               startWidth: 20,
               endWidth: 20,
             ),
             LinearGaugeRange(
               startValue: moderateMaxValue,
-              endValue: seriousMaxValue,
+              endValue: seriousMaxValue+2,
               color: Colors.deepOrange,
               startWidth: 20,
               endWidth: 20,
             ),
             LinearGaugeRange(
+              edgeStyle: LinearEdgeStyle.endCurve,
               startValue: seriousMaxValue,
-              endValue: maxValue,
+              endValue: maxValue+10,
               color: Colors.red,
               startWidth: 20,
               endWidth: 20,
             ),
           ],
           labelPosition: LinearLabelPosition.inside,
+          axisLabelStyle: TextStyle(
+            color: Colors.white,  // Mengubah warna label menjadi putih
+            fontSize: 14,         // Mengatur ukuran font
+            //fontWeight: FontWeight.bold, // Mengatur ketebalan font
+          ),
         ),
       ),
     );
