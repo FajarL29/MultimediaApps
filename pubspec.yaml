@@ -58,7 +58,6 @@ dependencies:
   qr_flutter: ^4.1.0
   weather: ^3.1.1
   baseflow_plugin_template: ^2.2.0
-  syncfusion_flutter_gauges: ^28.1.36
   flutter_blue_plus: ^1.34.5
   
 

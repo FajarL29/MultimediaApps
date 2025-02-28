@@ -27,7 +27,7 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/images/background_head_unit.jpg"),
+          image: AssetImage("assets/images/background_homescreen.jpg"),
           fit: BoxFit.cover,
         ),
       ),

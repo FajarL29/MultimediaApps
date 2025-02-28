@@ -80,17 +80,19 @@ class _HeartRateTableWidgetState extends State<HeartRateTableWidget> {
     return Center(
       child: Card(
         elevation: 4,
-        margin: const EdgeInsets.all(16),
+        color: Color(0xFF334EAC),
+        margin: const EdgeInsets.all(10),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Heart Rate Summary',
+                'Summary',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white
                 ),
               ),
               const SizedBox(height: 16),

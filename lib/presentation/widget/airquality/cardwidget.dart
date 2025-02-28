@@ -23,21 +23,14 @@ class Cardwidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
+      color: Color(0xFF12A8FF).withOpacity(0.30),
       margin: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isAlert
-                ? [Colors.red.shade100, Colors.red.shade400]
-                : [Colors.blue.shade100, Colors.blue.shade400],
-          ),
-          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -52,31 +45,33 @@ class Cardwidget extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 20),
+            //const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 icon,
                 const SizedBox(width: 12),
                 Text(
-                  textAlign: TextAlign.center,
-                  '${value.toStringAsFixed(1)}$unit',
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                '${value.toStringAsFixed(1)}$unit',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
+              ),
+
               ],
             ),
             if (alertMessage != null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Text(
                 textAlign: TextAlign.center,
                 alertMessage!,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
                 ),
               ),
             ],

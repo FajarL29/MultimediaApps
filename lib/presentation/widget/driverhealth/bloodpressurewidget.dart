@@ -15,31 +15,30 @@ class BloodPressureWidget extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(16),
+      color: Color(0xFF213371).withOpacity(0.75),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              textAlign: TextAlign.center,
-              'Blood Pressure',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  systolic > 130 || diastolic > 80
-                      ? Icons.warning
-                      : Icons.favorite,
-                  color: systolic > 130 || diastolic > 80
-                      ? Colors.red
-                      : Colors.green,
-                  size: 50,
+                Image.asset(
+                  'assets/images/bp.png',
+                  width: 90, // Sesuaiin ukuran
+                  height: 90, 
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(height: 8),
+                  ],
+                ),
+                const Text(
+                  textAlign: TextAlign.center,
+                  'Blood Pressure',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
                 Column(
                   children: [
                     Text(
@@ -50,7 +49,7 @@ class BloodPressureWidget extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: systolic > 130 || diastolic > 80
                             ? Colors.red
-                            : Colors.green,
+                            : Colors.white,
                       ),
                     ),
                     Text(
@@ -61,13 +60,14 @@ class BloodPressureWidget extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: systolic > 130 || diastolic > 80
                             ? Colors.red
-                            : Colors.green,
+                            : Colors.white,
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              
+            
+            
             const SizedBox(height: 8),
             Text(
               systolic > 130 || diastolic > 80

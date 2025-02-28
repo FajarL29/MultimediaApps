@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multimedia_apps/core/constant/app_styles.dart';
+import 'package:multimedia_apps/presentation/widget/mainpage/date_time.dart';
 
 class WeatherComponent extends StatefulWidget {
   const WeatherComponent({super.key});
@@ -38,6 +39,7 @@ class _WeatherComponentState extends State<WeatherComponent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const DateTimeWidget(), // Pastikan ini ada di dalam child
             Text(location,
                 style: TextStyles.f20(context)
                     .copyWith(color: AppStaticColors.white, fontSize: 20)),

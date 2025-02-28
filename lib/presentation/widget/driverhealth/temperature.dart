@@ -20,39 +20,44 @@ class BodyTemperatureWidget extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(16),
+      color: Color(0xFF213371).withOpacity(0.75), // Warna background jadi hitam
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              textAlign: TextAlign.center,
-              'Body Temperature',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Row(
+          Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.thermostat,
-                  color: fever ? Colors.red : Colors.blue,
-                  size: 50,
+                Image.asset(
+                  'assets/images/temp.png', // Path gambar dari assets
+                  width: 100, // Sesuaiin ukuran
+                  height: 100,
+                  // color: fever ? Colors.red : Colors.white, // Biar warnanya tetap dinamis
+                  //colorBlendMode: BlendMode.srcIn, // Buat nge-blend warna
                 ),
-                const SizedBox(width: 8),
-                Text(
+                const SizedBox(height: 8),
+              ],
+            ),
+          const Text(
+              textAlign: TextAlign.center,
+              'Body''\n'' Temperature',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+            const SizedBox(height: 8),
+
+           Text(
                   textAlign: TextAlign.center,
                   '${displayTemp.toStringAsFixed(1)}$unit',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: fever ? Colors.red : Colors.blue,
+                    color: fever ? Colors.red : Colors.white,
                   ),
                 ),
-              ],
-            ),
             const SizedBox(height: 8),
+            
             Text(
               textAlign: TextAlign.center,
               fever ? 'Fever Detected' : 'Normal Temperature',

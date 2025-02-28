@@ -9,38 +9,43 @@ class SpO2Widget extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(16),
+      color: Color(0xFF213371).withOpacity(0.75),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              textAlign: TextAlign.center,
-              'SpO2 (Oxygen Saturation)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.favorite,
-                  color: spO2rate < 90 ? Colors.red : Colors.green,
-                  size: 50,
+                Image.asset(
+                  'assets/images/spo2.png',
+                  width: 90, // Sesuaiin ukuran
+                  height: 90,
+                  // color: spO2rate < 90 ? Colors.red : Colors.green,
+                  
                 ),
-                const SizedBox(width: 8),
-                Text(
+                const SizedBox(height: 8),
+               
+              ],
+            ),
+            const Text(
+              textAlign: TextAlign.center,
+              'SpO2 ''\n''(Oxygen Saturation)',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+            const SizedBox(height: 8),
+             Text(
                   textAlign: TextAlign.center,
                   '${spO2rate.toStringAsFixed(1)}%',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: spO2rate < 90 ? Colors.red : Colors.green,
                   ),
                 ),
-              ],
-            ),
             const SizedBox(height: 8),
             Text(
               textAlign: TextAlign.center,

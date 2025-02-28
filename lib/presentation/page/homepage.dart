@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multimedia_apps/presentation/page/dashboard_home_page.dart';
 import 'package:multimedia_apps/presentation/widget/mainpage/map_components.dart';
 import 'package:multimedia_apps/presentation/widget/mainpage/voice_command_dialog.dart';
+import 'package:multimedia_apps/presentation/widget/new/driver_health.dart';
 
 class HomePage extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -48,6 +49,7 @@ class _HomePageState extends State<HomePage> {
                       width: maxWidth,
                       parentPadding: parentPadding,
                     ),
+                    //
                     const MapsComponent(),
                   ],
                 ),

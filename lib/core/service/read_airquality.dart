@@ -3,7 +3,7 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 class ReadAirquality {
   final SerialPort _port =
-      SerialPort('COM13'); // Replace with your port
+      SerialPort('/dev/ttyACM0'); // Replace with your port
   late SerialPortReader _reader;
   final StreamController<double> _coController =
       StreamController<double>.broadcast();

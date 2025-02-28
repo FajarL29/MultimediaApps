@@ -16,13 +16,16 @@ class _MenuListState extends State<MenuListComponent> {
   Widget build(BuildContext context) {
     final List<MenuItem> menuItems = [
       MenuItem(
-        menuColor: Colors.amber,
-        menuTitle: "Radio",
-        menuIcon: "assets/images/radio.png",
-        onTap: () {},
+        menuColor: Color(0xFF1A234C),
+        menuTitle: "TITAN Apps",
+        menuIcon: "assets/images/titan_app.png",
+        onTap: () {
+            //AccessValidation.showAccessValidation(context);
+          DeviceRegistration.showQRDialog(context);
+        }
       ),
       MenuItem(
-        menuColor: Colors.lightGreenAccent.shade400,
+        menuColor: Color(0xFF29DE2D),
         menuTitle: "Phone",
         menuIcon: "assets/images/phone.png",
         onTap: () {
@@ -31,7 +34,7 @@ class _MenuListState extends State<MenuListComponent> {
         },
       ),
       MenuItem(
-        menuColor: Colors.lightBlue,
+        menuColor: Color(0xFF334EAC),
         menuTitle: "Bluetooth",
         menuIcon: "assets/images/bluetooth.png",
         onTap: () {
@@ -39,25 +42,23 @@ class _MenuListState extends State<MenuListComponent> {
         },
       ),
       MenuItem(
-        menuColor: Colors.purple.shade200,
+        menuColor: Color(0xFF232C53),
         menuTitle: "WiFi",
         menuIcon: "assets/images/wifi.png",
         onTap: () {},
       ),
       MenuItem(
-        menuColor: Colors.tealAccent,
+        menuColor: Color(0xFFFF00A1),
         menuTitle: "Vehicle Info",
         menuIcon: "assets/images/vehicle_info.png",
         onTap: () {},
       ),
-      MenuItem(
-          menuColor: Colors.purple.shade400,
-          menuTitle: "TITAN Apps",
-          menuIcon: "assets/images/titan_app.png",
-          onTap: () {
-            //AccessValidation.showAccessValidation(context);
-            DeviceRegistration.showQRDialog(context);
-          }),
+         MenuItem(
+        menuColor: Color(0xFFFAC001),
+        menuTitle: "Radio",
+        menuIcon: "assets/images/radio.png",
+        onTap: () {},
+      ),
       MenuItem(
         menuColor: Colors.redAccent,
         menuTitle: "Driver's Health",
@@ -89,7 +90,7 @@ class _MenuListState extends State<MenuListComponent> {
     return GridView.builder(
       shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5, childAspectRatio: 7 / 6),
+          crossAxisCount: 5, childAspectRatio: 7 / 7),
       padding: const EdgeInsets.all(5.0),
       itemCount: menuItems.length,
       itemBuilder: (BuildContext context, int index) {

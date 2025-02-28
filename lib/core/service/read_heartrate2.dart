@@ -3,7 +3,7 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 class HeartRateService2 {
   final SerialPort _port =
-      SerialPort('COM13'); // Replace with your port
+      SerialPort('/dev/ttyACM1'); // Replace with your port
   late SerialPortReader _reader;
   final StreamController<int> _heartRateController =
       StreamController<int>.broadcast();
