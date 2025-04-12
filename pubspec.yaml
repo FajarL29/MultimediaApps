@@ -54,11 +54,13 @@ dependencies:
   flutter_dialpad: ^1.0.5
   font_awesome_flutter: ^10.8.0
   percent_indicator: ^4.2.4
-  getwidget: ^5.0.0
+  getwidget: ^6.0.0
   qr_flutter: ^4.1.0
   weather: ^3.1.1
   baseflow_plugin_template: ^2.2.0
   flutter_blue_plus: ^1.34.5
+  syncfusion_flutter_gauges: ^28.2.7
+  window_manager: ^0.4.3
   
 
 dev_dependencies:

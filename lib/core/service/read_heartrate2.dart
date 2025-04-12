@@ -1,9 +1,12 @@
 import 'dart:async';
-import 'package:flutter_libserialport/flutter_libserialport.dart';
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
+import 'package:libserialport/libserialport.dart';
 
 class HeartRateService2 {
-  final SerialPort _port =
-      SerialPort('/dev/ttyACM1'); // Replace with your port
+  late SerialPort _port; // Replace with your port
   late SerialPortReader _reader;
   final StreamController<int> _heartRateController =
       StreamController<int>.broadcast();
@@ -29,24 +32,45 @@ class HeartRateService2 {
   Stream<int> get respRateStream => _rrController.stream;
 
   void startListening() {
-    try {
-      final config = _port.config;
-      config.baudRate = 115200; // Replace with your desired baud rate
-      _port.config = config;
-
-      if (!_port.openReadWrite()) {
-        throw Exception('Failed to open port');
+  try {
+    SerialPort? tempPort;
+    final listPort = SerialPort.availablePorts;
+    for (var port in listPort) {
+      var p = SerialPort(port);
+      log('SERIAL : ${p.serialNumber}');
+      if (p.serialNumber == '5959074742') {
+        tempPort = SerialPort(p.name!);
+        p.close();
       }
-
-      _reader = SerialPortReader(_port);
-      _reader.stream.listen((data) {
-        rawData += String.fromCharCodes(data); // Append new data chunk
-        processRawData(); // Process complete lines
-      });
-    } catch (e) {
-      print('Error during port setup: $e');
     }
+
+    if (tempPort == null) {
+      throw Exception('Port not found');
+    }
+
+    _port = tempPort; // 🔹 Inisialisasi _port sebelum digunakan
+    _port.openReadWrite();     
+
+    _port.config = SerialPortConfig()
+      ..baudRate = 115200
+      ..bits = 8
+      ..stopBits = 1
+      ..parity = SerialPortParity.none
+      ..setFlowControl(SerialPortFlowControl.none);
+
+    _reader = SerialPortReader(_port);
+    _reader.stream.listen((data) {
+      log(String.fromCharCodes(data));
+      rawData += String.fromCharCodes(data);
+      processRawData();
+    });
+  } catch (e, s) {
+    if (e.toString() == 'Port not found') {
+      rawData += Uint8List.fromList(utf8.encode('Port not found')).toString();
+    }
+    print('Error during port setup: $e $s');
   }
+}
 
   void processRawData() {
     // Split the data into lines (assuming '\n' is the delimiter)
@@ -76,7 +100,7 @@ class HeartRateService2 {
             print("Invalid or incomplete data: $line");
           }
           break;
-        case 'BTemp':
+        case 'Body Temp':
           double? temp = double.tryParse(line[1]);
           if (temp != null) {
             _bodyTempController.add(temp); // EspO2 heart rate
@@ -85,7 +109,7 @@ class HeartRateService2 {
             print("Invalid or incomplete data: $line");
           }
           break;
-        case 'ESBP':
+        case 'SBP':
           int? esbp = int.tryParse(line[1]);
           if (esbp != null) {
             _sbpController.add(esbp); // EspO2 heart rate
@@ -94,7 +118,7 @@ class HeartRateService2 {
             print("Invalid or incomplete data: $line");
           }
           break;
-        case 'EDBP':
+        case 'DBP':
           int? edbp = int.tryParse(line[1]);
           if (edbp != null) {
             _dbpController.add(edbp); // EspO2 heart rate
@@ -104,7 +128,7 @@ class HeartRateService2 {
           }
           break;
 
-        case 'RRate':
+        case 'Respiratory Rate':
           int? rrate = int.tryParse(line[1]);
           if (rrate != null) {
             _rrController.add(rrate); // EspO2 heart rate
@@ -128,5 +152,6 @@ class HeartRateService2 {
     _dbpController.close();
     _rrController.close();
     _port.close();
+    _reader.close();
   }
 }

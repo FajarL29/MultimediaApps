@@ -69,23 +69,25 @@ class _HeartRateWidgetState extends State<HeartRateWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+  return Padding(
+    padding: const EdgeInsets.all(16), // Menambahkan padding 16
+    child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Image.asset(
-          
           'assets/images/heartbeat.png',
-          width: 90, // Sesuaiin ukuran
+          width: 90, // Sesuaikan ukuran
           height: 90,
-          
         ),
-        const SizedBox(height: 20),
+        const SizedBox(width: 20), // Mengubah height menjadi width untuk jarak horizontal
         Text(
           '$_currentHeartRate BPM',
           style: TextStyle(
               fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
+
 }
