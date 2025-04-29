@@ -233,6 +233,5 @@ void sendData(Map<String,dynamic> payload ) {
     _airPurifierRelayController.close();
     _port.close();
     _reader.close();
-
   }
 }

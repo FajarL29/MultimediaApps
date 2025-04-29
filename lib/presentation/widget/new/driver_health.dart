@@ -17,7 +17,7 @@ class HeartRateApp extends StatefulWidget {
   State<HeartRateApp> createState() => _HeartRateAppState();
 }
 
-class _HeartRateAppState extends State<HeartRateApp> {
+class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderStateMixin {
   late HeartRateService2 _heartRateService;
   double _currentTemperature = 0;
   int _sistole = 0;
@@ -25,12 +25,14 @@ class _HeartRateAppState extends State<HeartRateApp> {
   int _currentspo2 = 0;
   int _currentRR = 0;
 
-  String getHealthStatus() {
-    if (_currentTemperature > 39 || _sistole > 120 || _diastole > 80 || _currentRR > 22 || _currentspo2 > 100) {
-      return 'UNHEALTHY';
-    }
-    return 'HEALTHY';
-  }
+  bool _hasTemp = false;
+  bool _hasSpO2 = false;
+  bool _hasBP = false;
+  bool _hasRR = false;
+  bool _popupShown = false;
+
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
@@ -38,27 +40,152 @@ class _HeartRateAppState extends State<HeartRateApp> {
     _heartRateService = HeartRateService2();
     _heartRateService.startListening();
 
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
+
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+
     _heartRateService.bodyTempStream.listen((temperature) {
-      setState(() => _currentTemperature = temperature);
+      setState(() {
+        _currentTemperature = temperature;
+        _hasTemp = true;
+      });
+      _checkAndShowPopupOnce();
     });
+
     _heartRateService.sbpRateStream.listen((sbp) {
-      setState(() => _sistole = sbp);
+      setState(() {
+        _sistole = sbp;
+        _hasBP = true;
+      });
+      _checkAndShowPopupOnce();
     });
+
     _heartRateService.dbpRateStream.listen((dbp) {
-      setState(() => _diastole = dbp);
+      setState(() {
+        _diastole = dbp;
+        _hasBP = true;
+      });
+      _checkAndShowPopupOnce();
     });
-    _heartRateService.respRateStream.listen((currentrr) {
-      setState(() => _currentRR = currentrr);
+
+    _heartRateService.respRateStream.listen((rr) {
+      setState(() {
+        _currentRR = rr;
+        _hasRR = true;
+      });
+      _checkAndShowPopupOnce();
     });
+
     _heartRateService.spO2RateStream.listen((spo2) {
-      setState(() => _currentspo2 = spo2);
+      setState(() {
+        _currentspo2 = spo2;
+        _hasSpO2 = true;
+      });
+      _checkAndShowPopupOnce();
     });
   }
 
   @override
   void dispose() {
     _heartRateService.dispose();
+    _controller.dispose();
     super.dispose();
+  }
+
+  String getHealthStatus() {
+    if (_currentTemperature > 38 ||
+        _sistole > 120 ||
+        _diastole > 80 ||
+        _currentRR > 22 ||
+        _currentspo2 < 95) {
+      return 'UNHEALTHY';
+    }
+    return 'HEALTHY';
+  }
+
+  double _calculateProgress() {
+    int total = 4;
+    int completed = (_hasTemp ? 1 : 0) +
+        (_hasBP ? 1 : 0) +
+        (_hasRR ? 1 : 0) +
+        (_hasSpO2 ? 1 : 0);
+    return completed / total;
+  }
+
+ void _checkAndShowPopupOnce() {
+  print('Checking data...');
+  print('Temperature data available: $_hasTemp');
+  print('Blood Pressure data available: $_hasBP');
+  print('Respiratory Rate data available: $_hasRR');
+  print('SpO2 data available: $_hasSpO2');
+
+  if (!_popupShown && _hasTemp && _hasBP && _hasRR && _hasSpO2) {
+    _popupShown = true;
+    final status = getHealthStatus();
+    final message = status == 'HEALTHY'
+        ? "All your vital signs are within the safe range."
+        : _generateWarningMessage();
+    _showAbnormalPopup("Health Check Result: $status", message);
+  }
+}
+
+
+  String _generateWarningMessage() {
+    List<String> warnings = [];
+
+    if (_currentTemperature > 38) warnings.add("High temperature detected");
+    if (_sistole > 120 || _diastole > 80) warnings.add("Abnormal blood pressure");
+    if (_currentRR > 22) warnings.add("High respiration rate");
+    if (_currentspo2 < 95) warnings.add("Low SpO2 level");
+
+    return warnings.join(", ");
+  }
+
+  void _showAbnormalPopup(String title, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Row(
+          children: [
+            Icon(
+              title.contains('HEALTHY') ? Icons.check_circle : Icons.warning,
+              color: title.contains('HEALTHY') ? Colors.green : Colors.red,
+            ),
+            const SizedBox(width: 10),
+            Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
+          ],
+        ),
+        content: Text(message, style: const TextStyle(fontSize: 16)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _resetTest() {
+    setState(() {
+      _currentTemperature = 0;
+      _sistole = 0;
+      _diastole = 0;
+      _currentspo2 = 0;
+      _currentRR = 0;
+
+      _hasTemp = false;
+      _hasBP = false;
+      _hasRR = false;
+      _hasSpO2 = false;
+
+      _popupShown = false;
+    });
   }
 
   @override
@@ -69,7 +196,7 @@ class _HeartRateAppState extends State<HeartRateApp> {
       backgroundColor: Colors.transparent,
       body: Column(
         children: [
-          // Header Title & Back Button
+          // Header
           Expanded(
             flex: 1,
             child: Stack(
@@ -77,9 +204,8 @@ class _HeartRateAppState extends State<HeartRateApp> {
                 Center(
                   child: Text(
                     "Driver's Health",
-                    textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 24, // Responsif berdasarkan lebar layar
+                      fontSize: 24,
                       color: AppStaticColors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -96,14 +222,14 @@ class _HeartRateAppState extends State<HeartRateApp> {
             ),
           ),
 
-          // Kontainer Heart Rate
+          // Heart Rate Section
           Expanded(
             flex: 3,
             child: Container(
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
                 color: const Color(0xFF334EAC),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +239,7 @@ class _HeartRateAppState extends State<HeartRateApp> {
                     child: Text(
                       'HEART RATE',
                       style: TextStyle(
-                        fontSize: Sizes.defaultScreenHeight * 0.05,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -123,14 +249,10 @@ class _HeartRateAppState extends State<HeartRateApp> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: HeartRateWidget(
-                            heartRateStream: _heartRateService.heartRateStream,
-                          ),
+                          child: HeartRateWidget(heartRateStream: _heartRateService.heartRateStream),
                         ),
                         Expanded(
-                          child: HeartRateTableWidget(
-                            heartRateStream: _heartRateService.heartRateStream,
-                          ),
+                          child: HeartRateTableWidget(heartRateStream: _heartRateService.heartRateStream),
                         ),
                       ],
                     ),
@@ -140,38 +262,52 @@ class _HeartRateAppState extends State<HeartRateApp> {
             ),
           ),
 
-          // Baris untuk metrik kesehatan lainnya
+          // Reset & Progress
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton.icon(
+                  onPressed: _resetTest,
+                  icon: const Icon(Icons.refresh, color: Colors.white),
+                  label: const Text("Reset Check", style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: AnimatedBuilder(
+                    animation: _animation,
+                    builder: (context, child) {
+                      final progress = _calculateProgress();
+                      return LinearProgressIndicator(
+                        value: progress < 1.0 ? _animation.value * progress : 1.0,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Other Vitals
           Expanded(
             flex: 4,
             child: Row(
               children: [
-                Expanded(
-                  child: BodyTemperatureWidget(
-                    temperature: _currentTemperature,
-                    isCelsius: true,
-                  ),
-                ),
+                Expanded(child: BodyTemperatureWidget(temperature: _currentTemperature, isCelsius: true)),
                 Expanded(child: SpO2Widget(spO2rate: _currentspo2)),
                 Expanded(child: RespirationRateWidget(respirationRate: _currentRR)),
-                Expanded(child:
-                    BloodPressureWidget(systolic:_sistole,diastolic:_diastole)),
+                Expanded(child: BloodPressureWidget(systolic: _sistole, diastolic: _diastole)),
               ],
             ),
           ),
-
-          // Status Kesehatan
-          // Expanded(
-          //   flex: 1,
-          //   child:
-          //       Row(mainAxisAlignment : MainAxisAlignment.center,children :[
-          //     Container(padding:
-          //     const EdgeInsets.symmetric(vertical :14,horizontal :26),decoration :
-          //     BoxDecoration(borderRadius :BorderRadius.circular(20),color :
-          //     getHealthStatus() =='HEALTHY'?Colors.blue :Colors.red),child :
-          //     Text("Health Status : ${getHealthStatus()}",textAlign :
-          //     TextAlign.center,style :TextStyle(fontSize :
-          //     screenWidth*0.02,color :AppStaticColors.white,fontWeight :
-          //     FontWeight.bold)))]) )
         ],
       ),
     );

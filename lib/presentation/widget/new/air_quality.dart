@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multimedia_apps/core/constant/app_color.dart';
+// import 'package:multimedia_apps/core/constant/app_color.dart';
 import 'package:multimedia_apps/core/service/read_airquality.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/airqualitywidget.dart';
-import 'package:multimedia_apps/presentation/widget/airquality/cardwidget.dart';
-import 'package:multimedia_apps/presentation/widget/airquality/gaugewidget.dart';
+// import 'package:multimedia_apps/presentation/widget/airquality/cardwidget.dart';
+// import 'package:multimedia_apps/presentation/widget/airquality/gaugewidget.dart';
 class AirQualityApp extends StatefulWidget {
   const AirQualityApp({super.key});
 
@@ -62,6 +62,9 @@ class _AirQualityAppState extends State<AirQualityApp> {
 
     _airqualityService.coStream.listen((co) {
       setState(() => _currentco = co.toDouble());
+      if (_currentco > 9) {
+        _showAbnormalPopup("High CO Detected", "Carbon Monoxide is above safe levels");
+      }
     });
 
     _airqualityService.co2Stream.listen((co2) {
@@ -681,6 +684,22 @@ class _AirQualityAppState extends State<AirQualityApp> {
       ),
     );
   }
+
+  void _showAbnormalPopup(String title, String message) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text("OK"),
+        ),
+      ],
+    ),
+  );
+}
 }
 
 class PollutantStatus {

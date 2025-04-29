@@ -10,8 +10,8 @@ const Size screenDimension = Size(1920, 1080);
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
-   final ports = SerialPort.availablePorts;
-  print("Available ports: $ports");
+  final ports = SerialPort.availablePorts;
+  ("Available ports: $ports");
   WindowOptions windowOptions = WindowOptions(
     fullScreen: true,
     titleBarStyle: TitleBarStyle.hidden,
