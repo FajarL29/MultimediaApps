@@ -4,6 +4,7 @@ import 'package:multimedia_apps/core/constant/app_color.dart';
 import 'package:multimedia_apps/core/constant/app_styles.dart';
 import 'package:multimedia_apps/core/service/read_heartrate2.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/bloodpressurewidget.dart';
+import 'package:multimedia_apps/presentation/widget/driverhealth/heart_beat_waveform.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/heart_ratewidget.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/heartratetablewidget.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/respiratorywidget.dart';
@@ -24,15 +25,18 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
   int _diastole = 0;
   int _currentspo2 = 0;
   int _currentRR = 0;
+  bool _finger = false;
 
   bool _hasTemp = false;
   bool _hasSpO2 = false;
   bool _hasBP = false;
   bool _hasRR = false;
   bool _popupShown = false;
+  //bool _finger = false;
 
-  late AnimationController _controller;
-  late Animation<double> _animation;
+
+  // late AnimationController _controller;
+  // late Animation<double> _animation;
 
   @override
   void initState() {
@@ -40,12 +44,12 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
     _heartRateService = HeartRateService2();
     _heartRateService.startListening();
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat();
+    // _controller = AnimationController(
+    //   vsync: this,
+    //   duration: const Duration(seconds: 5),
+    // )..repeat();
 
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+    // _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
 
     _heartRateService.bodyTempStream.listen((temperature) {
       setState(() {
@@ -86,12 +90,20 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
       });
       _checkAndShowPopupOnce();
     });
+    _heartRateService.fingerDetectedStream.listen((isFingerDetected) {
+      setState(() {
+        _finger = isFingerDetected;
+        print('status $_finger');
+        
+      });
+      // fingerDetectedStream = true;
+    });
   }
 
   @override
   void dispose() {
     _heartRateService.dispose();
-    _controller.dispose();
+    // _controller.dispose();
     super.dispose();
   }
 
@@ -106,21 +118,21 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
     return 'HEALTHY';
   }
 
-  double _calculateProgress() {
-    int total = 4;
-    int completed = (_hasTemp ? 1 : 0) +
-        (_hasBP ? 1 : 0) +
-        (_hasRR ? 1 : 0) +
-        (_hasSpO2 ? 1 : 0);
-    return completed / total;
-  }
+  // double _calculateProgress() {
+  //   int total = 4;
+  //   int completed = (_hasTemp ? 1 : 0) +
+  //       (_hasBP ? 1 : 0) +
+  //       (_hasRR ? 1 : 0) +
+  //       (_hasSpO2 ? 1 : 0);
+  //   return completed / total;
+  // }
 
  void _checkAndShowPopupOnce() {
-  print('Checking data...');
-  print('Temperature data available: $_hasTemp');
-  print('Blood Pressure data available: $_hasBP');
-  print('Respiratory Rate data available: $_hasRR');
-  print('SpO2 data available: $_hasSpO2');
+  // print('Checking data...');
+  // print('Temperature data available: $_hasTemp');
+  // print('Blood Pressure data available: $_hasBP');
+  // print('Respiratory Rate data available: $_hasRR');
+  // print('SpO2 data available: $_hasSpO2');
 
   if (!_popupShown && _hasTemp && _hasBP && _hasRR && _hasSpO2) {
     _popupShown = true;
@@ -190,7 +202,7 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+   // final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -263,6 +275,21 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
           ),
 
           // Reset & Progress
+          
+
+          // Other Vitals
+          Expanded(
+            flex: 4,
+            child: Row(
+              children: [
+                Expanded(child: BodyTemperatureWidget(temperature: _currentTemperature, isCelsius: true)),
+                Expanded(child: SpO2Widget(spO2rate: _currentspo2)),
+                Expanded(child: RespirationRateWidget(respirationRate: _currentRR)),
+                Expanded(child: BloodPressureWidget(systolic: _sistole, diastolic: _diastole)),
+              ],
+            ),
+          ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -280,33 +307,14 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: AnimatedBuilder(
-                    animation: _animation,
-                    builder: (context, child) {
-                      final progress = _calculateProgress();
-                      return LinearProgressIndicator(
-                        value: progress < 1.0 ? _animation.value * progress : 1.0,
-                      );
-                    },
-                  ),
-                ),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: HeartBeatWaveform(heartRateStream: _heartRateService.heartRateStream,
+                fingerDetectedStream:_heartRateService.fingerDetectedStream),
               ),
-            ],
-          ),
-
-          // Other Vitals
-          Expanded(
-            flex: 4,
-            child: Row(
-              children: [
-                Expanded(child: BodyTemperatureWidget(temperature: _currentTemperature, isCelsius: true)),
-                Expanded(child: SpO2Widget(spO2rate: _currentspo2)),
-                Expanded(child: RespirationRateWidget(respirationRate: _currentRR)),
-                Expanded(child: BloodPressureWidget(systolic: _sistole, diastolic: _diastole)),
-              ],
             ),
+
+            ],
           ),
         ],
       ),

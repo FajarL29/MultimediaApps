@@ -8,6 +8,7 @@ import 'package:libserialport/libserialport.dart';
 class HeartRateService2 {
   late SerialPort _port; // Replace with your port
   late SerialPortReader _reader;
+  bool fingerDetected = false;
   final StreamController<int> _heartRateController =
       StreamController<int>.broadcast();
   final StreamController<int> _spO2Controller =
@@ -18,7 +19,11 @@ class HeartRateService2 {
       StreamController<int>.broadcast();
   final StreamController<int> _dbpController =
       StreamController<int>.broadcast();
-  final StreamController<int> _rrController = StreamController<int>.broadcast();
+  final StreamController<int> _rrController =
+      StreamController<int>.broadcast();
+  final StreamController<bool> fingerDetectedController = 
+      StreamController<bool>.broadcast();
+
   String rawData = '';
 
   HeartRateService2();
@@ -30,6 +35,7 @@ class HeartRateService2 {
   Stream<int> get sbpRateStream => _sbpController.stream;
   Stream<int> get dbpRateStream => _dbpController.stream;
   Stream<int> get respRateStream => _rrController.stream;
+  Stream<bool> get fingerDetectedStream => fingerDetectedController.stream;
 
   void startListening() {
   try {
@@ -106,6 +112,17 @@ class HeartRateService2 {
       final line = lines[i].split(':');
       final String check = line[0].trim();
 
+      final lineStr = lines[i].trim();
+      if (lineStr == "Scanning Your Health Condition") {
+        fingerDetected = true;
+        print("Jari terdeteksi");
+        fingerDetectedController.add(true);
+      } else if (lineStr == "Letakkan jari di sensor") {
+        fingerDetected = false;
+        print("Gaada jari");
+        fingerDetectedController.add(false);
+      }
+
       switch (check) {
         case 'BPM':
           int? heartRate = int.tryParse(line[1]);
@@ -176,6 +193,7 @@ class HeartRateService2 {
     _sbpController.close();
     _dbpController.close();
     _rrController.close();
+    fingerDetectedController.close();
     _port.close();
     _reader.close();
   }
