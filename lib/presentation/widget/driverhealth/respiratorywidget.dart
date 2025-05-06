@@ -12,36 +12,35 @@ class RespirationRateWidget extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       color: Color(0xFF213371).withOpacity(0.75),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(45),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                    'assets/images/lungs.png',
-                  width: 90, // Sesuaiin ukuran
-                  height: 90,
+                  width: 150, // Sesuaiin ukuran
+                  height: 150,
                   // color: respirationRate < 12 || respirationRate > 20
                   //     ? Colors.red
                   //     : Colors.blue,
                 ),
-                const SizedBox(height: 8),
-              ],
-            ),
-            const Text(
+                const SizedBox(height: 15),
+
+                const Text(
               textAlign: TextAlign.center,
               'Respiration''\n''Rate',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
             ),
-            const SizedBox(height: 8),
+
             Text(
                   textAlign: TextAlign.center,
                   '$respirationRate bpm',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: respirationRate < 12 || respirationRate > 20
                         ? Colors.red
@@ -63,6 +62,12 @@ class RespirationRateWidget extends StatelessWidget {
                     : Colors.grey,
               ),
             ),
+
+
+              ],
+            ),
+            
+            
           ],
         ),
       ),

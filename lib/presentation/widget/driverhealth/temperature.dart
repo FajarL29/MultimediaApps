@@ -22,42 +22,41 @@ class BodyTemperatureWidget extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       color: Color(0xFF213371).withOpacity(0.75), // Warna background jadi hitam
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(48),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-          Row(
+          Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   'assets/images/temp.png', // Path gambar dari assets
-                  width: 100, // Sesuaiin ukuran
-                  height: 100,
+                  width: 150, // Sesuaiin ukuran
+                  height: 150,
                   // color: fever ? Colors.red : Colors.white, // Biar warnanya tetap dinamis
                   //colorBlendMode: BlendMode.srcIn, // Buat nge-blend warna
                 ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          const Text(
+                const SizedBox(height: 15),
+
+                const Text(
               textAlign: TextAlign.center,
               'Body''\n'' Temperature',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
             ),
-            const SizedBox(height: 8),
 
+            
            Text(
                   textAlign: TextAlign.center,
                   '${displayTemp.toStringAsFixed(1)}$unit',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: fever ? Colors.red : Colors.white,
                   ),
                 ),
             const SizedBox(height: 8),
-            
+
             Text(
               textAlign: TextAlign.center,
               fever ? 'Fever Detected' : 'Normal Temperature',
@@ -65,6 +64,8 @@ class BodyTemperatureWidget extends StatelessWidget {
                 fontSize: 14,
                 color: fever ? Colors.red : Colors.grey,
               ),
+            ),
+              ],
             ),
           ],
         ),

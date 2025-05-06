@@ -62,7 +62,6 @@ dependencies:
   syncfusion_flutter_gauges: ^28.2.7
   window_manager: ^0.4.3
   step_progress_indicator: ^1.0.2
-  audioplayers: ^6.4.0
   
 
 dev_dependencies:
