@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multimedia_apps/core/constant/app_color.dart';
 import 'package:multimedia_apps/core/constant/app_styles.dart';
 import 'package:multimedia_apps/core/service/read_heartrate2.dart';
+import 'package:multimedia_apps/presentation/widget/driverhealth/AbnormalPopupDialog.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/bloodpressurewidget.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/heart_beat_waveform.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/heart_ratewidget.dart';
@@ -56,7 +57,7 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
         _currentTemperature = temperature;
         _hasTemp = true;
       });
-      _checkAndShowPopupOnce();
+      _checkAndShowPopupOnce(context);
     });
 
     _heartRateService.sbpRateStream.listen((sbp) {
@@ -64,7 +65,7 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
         _sistole = sbp;
         _hasBP = true;
       });
-      _checkAndShowPopupOnce();
+      _checkAndShowPopupOnce(context);
     });
 
     _heartRateService.dbpRateStream.listen((dbp) {
@@ -72,7 +73,7 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
         _diastole = dbp;
         _hasBP = true;
       });
-      _checkAndShowPopupOnce();
+      _checkAndShowPopupOnce(context);
     });
 
     _heartRateService.respRateStream.listen((rr) {
@@ -80,7 +81,7 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
         _currentRR = rr;
         _hasRR = true;
       });
-      _checkAndShowPopupOnce();
+      _checkAndShowPopupOnce(context);
     });
 
     _heartRateService.spO2RateStream.listen((spo2) {
@@ -88,7 +89,7 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
         _currentspo2 = spo2;
         _hasSpO2 = true;
       });
-      _checkAndShowPopupOnce();
+      _checkAndShowPopupOnce(context);
     });
     _heartRateService.fingerDetectedStream.listen((isFingerDetected) {
       setState(() {
@@ -96,14 +97,12 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
         print('status $_finger');
         
       });
-      // fingerDetectedStream = true;
     });
   }
 
   @override
   void dispose() {
     _heartRateService.dispose();
-    // _controller.dispose();
     super.dispose();
   }
 
@@ -118,31 +117,18 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
     return 'HEALTHY';
   }
 
-  // double _calculateProgress() {
-  //   int total = 4;
-  //   int completed = (_hasTemp ? 1 : 0) +
-  //       (_hasBP ? 1 : 0) +
-  //       (_hasRR ? 1 : 0) +
-  //       (_hasSpO2 ? 1 : 0);
-  //   return completed / total;
-  // }
 
- void _checkAndShowPopupOnce() {
-  // print('Checking data...');
-  // print('Temperature data available: $_hasTemp');
-  // print('Blood Pressure data available: $_hasBP');
-  // print('Respiratory Rate data available: $_hasRR');
-  // print('SpO2 data available: $_hasSpO2');
-
+void _checkAndShowPopupOnce(BuildContext context) {
   if (!_popupShown && _hasTemp && _hasBP && _hasRR && _hasSpO2) {
     _popupShown = true;
     final status = getHealthStatus();
     final message = status == 'HEALTHY'
         ? "All your vital signs are within the safe range."
         : _generateWarningMessage();
-    _showAbnormalPopup("Health Check Result: $status", message);
+    showAbnormalPopup(context, "Health Check Result: $status", message);
   }
 }
+
 
 
   String _generateWarningMessage() {
@@ -155,33 +141,46 @@ class _HeartRateAppState extends State<HeartRateApp> with SingleTickerProviderSt
 
     return warnings.join(", ");
   }
+ void showAbnormalPopup(BuildContext context, String title, String message) {
+  final isHealthy = title.toUpperCase().contains('HEALTHY');
 
-  void _showAbnormalPopup(String title, String message) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Row(
-          children: [
-            Icon(
-              title.contains('HEALTHY') ? Icons.check_circle : Icons.warning,
-              color: title.contains('HEALTHY') ? Colors.green : Colors.red,
-            ),
-            const SizedBox(width: 10),
-            Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
-          ],
-        ),
-        content: Text(message, style: const TextStyle(fontSize: 16)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => AbnormalPopupDialog(
+      title: title,
+      message: message,
+      isHealthy: isHealthy,
+    ),
+  );
+}
+
+  // void _showAbnormalPopup(String title, String message) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) => AlertDialog(
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+  //       title: Row(
+  //         children: [
+  //           Icon(
+  //             title.contains('HEALTHY') ? Icons.check_circle : Icons.warning,
+  //             color: title.contains('HEALTHY') ? Colors.green : Colors.red,
+  //           ),
+  //           const SizedBox(width: 10),
+  //           Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
+  //         ],
+  //       ),
+  //       content: Text(message, style: const TextStyle(fontSize: 16)),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.of(context).pop(),
+  //           child: const Text("OK"),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   void _resetTest() {
     setState(() {
