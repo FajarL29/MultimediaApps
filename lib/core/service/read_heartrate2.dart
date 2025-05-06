@@ -39,50 +39,10 @@ class HeartRateService2 {
   Stream<int> get respRateStream => _rrController.stream;
   Stream<bool> get fingerDetectedStream => fingerDetectedController.stream;
 
-//   void startListening() {
-//   try {
-//     _port = SerialPort("COM18"); // Ganti "COM4" dengan port kamu, atau "/dev/ttyUSB0" di Linux
-//     _port.openReadWrite();
-
-//     _port.config = SerialPortConfig()
-//       ..baudRate = 115200
-//       ..bits = 8
-//       ..stopBits = 1
-//       ..parity = SerialPortParity.none
-//       ..setFlowControl(SerialPortFlowControl.none);
-
-//     _reader = SerialPortReader(_port);
-//     _reader.stream.listen((data) {
-//       log(String.fromCharCodes(data));
-//       rawData += String.fromCharCodes(data);
-//       processRawData();
-//     });
-//   } catch (e, s) {
-//     print('Error during port setup: $e $s');
-//   }
-// }
-
-
-
   void startListening() {
   try {
-    SerialPort? tempPort;
-    final listPort = SerialPort.availablePorts;
-    for (var port in listPort) {
-      var p = SerialPort(port);
-      log('SERIAL : ${p.serialNumber}');
-      if (p.serialNumber == '5959074742') {
-        tempPort = SerialPort(p.name!);
-        p.close();
-      }
-    }
-
-    if (tempPort == null) {
-      throw Exception('Port not found');
-    }
-
-    _port = tempPort; // 🔹 Inisialisasi _port sebelum digunakan
-    _port.openReadWrite();     
+    _port = SerialPort("COM18"); // Ganti "COM4" dengan port kamu, atau "/dev/ttyUSB0" di Linux
+    _port.openReadWrite();
 
     _port.config = SerialPortConfig()
       ..baudRate = 115200
@@ -98,12 +58,52 @@ class HeartRateService2 {
       processRawData();
     });
   } catch (e, s) {
-    if (e.toString() == 'Port not found') {
-      rawData += Uint8List.fromList(utf8.encode('Port not found')).toString();
-    }
     print('Error during port setup: $e $s');
   }
 }
+
+
+
+//   void startListening() {
+//   try {
+//     SerialPort? tempPort;
+//     final listPort = SerialPort.availablePorts;
+//     for (var port in listPort) {
+//       var p = SerialPort(port);
+//       log('SERIAL : ${p.serialNumber}');
+//       if (p.serialNumber == '5959074742') {
+//         tempPort = SerialPort(p.name!);
+//         p.close();
+//       }
+//     }
+
+//     if (tempPort == null) {
+//       throw Exception('Port not found');
+//     }
+
+//     _port = tempPort; // 🔹 Inisialisasi _port sebelum digunakan
+//     _port.openReadWrite();     
+
+//     _port.config = SerialPortConfig()
+//       ..baudRate = 115200
+//       ..bits = 8
+//       ..stopBits = 1
+//       ..parity = SerialPortParity.none
+//       ..setFlowControl(SerialPortFlowControl.none);
+
+//     _reader = SerialPortReader(_port);
+//     _reader.stream.listen((data) {
+//       log(String.fromCharCodes(data));
+//       rawData += String.fromCharCodes(data);
+//       processRawData();
+//     });
+//   } catch (e, s) {
+//     if (e.toString() == 'Port not found') {
+//       rawData += Uint8List.fromList(utf8.encode('Port not found')).toString();
+//     }
+//     print('Error during port setup: $e $s');
+//   }
+// }
 
   void processRawData() {
     // Split the data into lines (assuming '\n' is the delimiter)
