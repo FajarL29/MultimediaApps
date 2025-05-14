@@ -13,7 +13,7 @@ class ReadAirquality {
       StreamController<double>.broadcast();
   final StreamController<double> _pM25Controller =
       StreamController<double>.broadcast();
-      final StreamController<double> _pM10Controller =
+  final StreamController<double> _pM10Controller =
       StreamController<double>.broadcast();
   final StreamController<double> _tempController =
       StreamController<double>.broadcast();
@@ -21,9 +21,11 @@ class ReadAirquality {
       StreamController<double>.broadcast();
   final StreamController<double> _humController =
       StreamController<double>.broadcast();
-      final StreamController<int> _co2RelayController =
+  final StreamController<int> _co2RelayController =
       StreamController<int>.broadcast();
-      final StreamController<int> _airPurifierRelayController =
+  final StreamController<int> _airPurifierRelayController =
+      StreamController<int>.broadcast();
+  final StreamController<int> _aqiController =
       StreamController<int>.broadcast();
   String rawData = '';
 
@@ -40,70 +42,92 @@ class ReadAirquality {
   Stream<double> get humStream => _humController.stream;
   Stream<int> get co2RelayStatus => _co2RelayController.stream;
   Stream<int> get airPurifierRelayStatus => _airPurifierRelayController.stream;
+  Stream<int> get airQualityIndexStatus => _aqiController.stream;
 
 
-
-
-  void startListening() {
+void startListening() {
   try {
-    final listPort = SerialPort.availablePorts;
-    print('Available Ports: $listPort'); // Debugging
+    _port = SerialPort("COM10"); // Ganti "COM4" dengan port kamu, atau "/dev/ttyUSB0" di Linux
+    _port.openReadWrite();
 
-    for (var port in listPort) {
-      var p = SerialPort(port);
-      print('Checking port: ${p.name}, Serial: ${p.serialNumber}');
-
-      if (p.serialNumber == '5735016773') {
-        _port = SerialPort(p.name!);
-        p.close();
-        break; // Exit loop once found
-      }
-    }
-
-    if (_port == null) {
-      print('❌ Error: Serial port not found!');
-      return;
-    }
-
-    print('✅ Selected Port: ${_port.name}');
-
-    if (!_port.openReadWrite()) {
-      print('❌ Error: Failed to open port ${_port.name}');
-      return;
-    }
-
-    print('✅ Port opened successfully.');
-
-    final config = _port.config;
-    config.baudRate = 115200;
-    _port.config = config;
+    _port.config = SerialPortConfig()
+      ..baudRate = 115200
+      ..bits = 8
+      ..stopBits = 1
+      ..parity = SerialPortParity.none
+      ..setFlowControl(SerialPortFlowControl.none);
 
     _reader = SerialPortReader(_port);
-    
-    // Check if _reader is successfully initialized
-    if (_reader == null) {
-      print('❌ Error: Failed to initialize SerialPortReader.');
-      return;
-    }
-
-    print('🎧 Listening to stream...');
-    
     _reader.stream.listen((data) {
+      log(String.fromCharCodes(data));
       rawData += String.fromCharCodes(data);
-      log('DATA : $rawData');
-
       processRawData();
-    }, onError: (error) {
-      print('❌ Stream error: $error');
-    }, onDone: () {
-      print('✅ Stream closed.');
     });
-
-
-  } catch (e) {
-    print('❌ Exception during port setup: $e');
+  } catch (e, s) {
+    print('Error during port setup: $e $s');
   }
 }
+
+//   void startListening() {
+//   try {
+//     final listPort = SerialPort.availablePorts;
+//     print('Available Ports: $listPort'); // Debugging
+
+//     for (var port in listPort) {
+//       var p = SerialPort(port);
+//       print('Checking port: ${p.name}, Serial: ${p.serialNumber}');
+
+//       if (p.serialNumber == '5735016773') {
+//         _port = SerialPort(p.name!);
+//         p.close();
+//         break; // Exit loop once found
+//       }
+//     }
+
+//     if (_port == null) {
+//       print('❌ Error: Serial port not found!');
+//       return;
+//     }
+
+//     print('✅ Selected Port: ${_port.name}');
+
+//     if (!_port.openReadWrite()) {
+//       print('❌ Error: Failed to open port ${_port.name}');
+//       return;
+//     }
+
+//     print('✅ Port opened successfully.');
+
+//     final config = _port.config;
+//     config.baudRate = 115200;
+//     _port.config = config;
+
+//     _reader = SerialPortReader(_port);
+    
+//     // Check if _reader is successfully initialized
+//     if (_reader == null) {
+//       print('❌ Error: Failed to initialize SerialPortReader.');
+//       return;
+//     }
+
+//     print('🎧 Listening to stream...');
+    
+//     _reader.stream.listen((data) {
+//       rawData += String.fromCharCodes(data);
+//       log('DATA : $rawData');
+
+//       processRawData();
+//     }, onError: (error) {
+//       print('❌ Stream error: $error');
+//     }, onDone: () {
+//       print('✅ Stream closed.');
+//     });
+
+
+//   } catch (e) {
+//     print('❌ Exception during port setup: $e');
+//   }
+// }
 
 
 void sendData(Map<String,dynamic> payload ) {
@@ -213,6 +237,14 @@ void sendData(Map<String,dynamic> payload ) {
             print("Invalid or incomplete data: $line");
           }
           break;  
+          case 'Air Quality Index' :
+          int? status = int.tryParse(line[1]);
+          if (status != null) {
+            _aqiController.add(status);
+            print("AQI Stream emitted :$status");
+          } else {
+            print("Invalid or incomplete data: $line");
+          }
       } // Remove any extra whitespace
     }
 
@@ -231,6 +263,7 @@ void sendData(Map<String,dynamic> payload ) {
     _humController.close();
     _co2RelayController.close();
     _airPurifierRelayController.close();
+    _aqiController.close();
     _port.close();
     _reader.close();
   }

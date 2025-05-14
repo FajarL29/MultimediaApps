@@ -25,6 +25,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
   double _currenthum = 0;
   int _currentCor = 0;
   int _currentApr = 0;
+  int _currentAqi = 0;
 
   String getAirPurifierStatus() {
     if (_currentco > 9 || _currentco2 > 600 || _currentpm25 > 20 || _currentpm10 > 20) {
@@ -62,9 +63,9 @@ class _AirQualityAppState extends State<AirQualityApp> {
 
     _airqualityService.coStream.listen((co) {
       setState(() => _currentco = co.toDouble());
-      if (_currentco > 9) {
-        _showAbnormalPopup("High CO Detected", "Carbon Monoxide is above safe levels");
-      }
+      // if (_currentco > 9) {
+      //   _showAbnormalPopup("High CO Detected", "Carbon Monoxide is above safe levels");
+      // }
     });
 
     _airqualityService.co2Stream.listen((co2) {
@@ -97,6 +98,11 @@ class _AirQualityAppState extends State<AirQualityApp> {
 
     _airqualityService.airPurifierRelayStatus.listen((apr) {
       setState(() => _currentApr = apr);
+    });
+
+    _airqualityService.airQualityIndexStatus.listen((aqi) {
+      setState(() => _currentAqi = aqi);
+      //print("status $_currentAqi");
     });
   }
 
@@ -498,25 +504,20 @@ class _AirQualityAppState extends State<AirQualityApp> {
       ),
       child: Column(
         children: [
-          const Text(
-            "Air Quality Index",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+          // const Text(
+          //   "Air Quality Index",
+          //   style: TextStyle(
+          //     fontSize: 18,
+          //     fontWeight: FontWeight.bold,
+          //     color: Colors.white,
+          //   ),
+          // ),
           const SizedBox(height: 16),
           // Use your existing gauge widget here
           AQGaugeWidget(
-            aqvalue: 100,
-            gaugetitle: 'Air Quality',
-            maxValue: 1000,
-            minValue: 0,
-            goodMaxValue: 60,
-            moderateMaxValue: 500,
-            seriousMaxValue: 600,
-          ),
+          aqvalue: _currentAqi,
+          gaugetitle: 'Air Quality Index',
+        ),
         ],
       ),
     );

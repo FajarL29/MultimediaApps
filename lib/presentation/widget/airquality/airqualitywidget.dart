@@ -2,114 +2,102 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class AQGaugeWidget extends StatelessWidget {
-  final double aqvalue;
+  final int aqvalue;
   final String gaugetitle;
-  final double maxValue;
-  final double minValue;
-  final double goodMaxValue;
-  final double moderateMaxValue;
-  final double seriousMaxValue;
 
   const AQGaugeWidget({
     super.key,
     required this.aqvalue,
     required this.gaugetitle,
-    required this.maxValue,
-    required this.minValue,
-    required this.goodMaxValue,
-    required this.moderateMaxValue,
-    required this.seriousMaxValue,
   });
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.transparent,
-        ),
-        child: SfLinearGauge(
-
-          
-          orientation: LinearGaugeOrientation.horizontal,
-          minimum: minValue,
-          maximum: maxValue,
-          interval: maxValue / 4,
-          minorTicksPerInterval: 4,
-          axisTrackStyle: const LinearAxisTrackStyle(
-            thickness: 20,
-            edgeStyle: LinearEdgeStyle.bothFlat,
-            //color: Colors.black,
-            color: Colors.transparent,
-          ),
-
-          
-            markerPointers: <LinearMarkerPointer>[
-            LinearShapePointer(
-              value: 900,
-              shapeType: LinearShapePointerType.triangle,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            gaugetitle,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
               color: Colors.white,
-              borderColor: Colors.white,
-              borderWidth: 3,
-              position: LinearElementPosition.cross, // Bisa diubah ke inside/middle
-              width: 40, // Ukuran lingkaran lebih besar
-              height: 40, // Sesuai dengan width agar tetap lingkaran
             ),
-          ],
-
-          ranges: <LinearGaugeRange>[
-            LinearGaugeRange(
-              edgeStyle: LinearEdgeStyle.startCurve,
-              startValue: minValue,
-              endValue: goodMaxValue,
-              color: Colors.green,
-              startWidth: 45,
-              endWidth: 45,
-            ),
-            LinearGaugeRange(
-              
-              startValue: goodMaxValue,
-              endValue: moderateMaxValue+2,
-              color: Colors.orange,
-              startWidth: 45,
-              endWidth: 45,
-            ),
-            LinearGaugeRange(
-              startValue: moderateMaxValue,
-              endValue: seriousMaxValue+2,
-              color: Colors.deepOrange,
-              startWidth: 45,
-              endWidth: 45,
-            ),
-            LinearGaugeRange(
-              edgeStyle: LinearEdgeStyle.endCurve,
-              startValue: seriousMaxValue,
-              endValue: maxValue+10,
-              color: Colors.red,
-              startWidth: 45,
-              endWidth: 45,
-            ),
-          ],
-          labelPosition: LinearLabelPosition.inside,
-          axisLabelStyle: TextStyle(
-            color: Colors.white,  // Mengubah warna label menjadi putih
-            fontSize: 18,         // Mengatur ukuran font
-            //fontWeight: FontWeight.bold, // Mengatur ketebalan font
           ),
-        ),
-        
+          const SizedBox(height: 16),
+          SfLinearGauge(
+            orientation: LinearGaugeOrientation.horizontal,
+            minimum: 0,
+            maximum: 200,
+            interval: 50,
+            minorTicksPerInterval: 4,
+            axisTrackStyle: const LinearAxisTrackStyle(
+              thickness: 20,
+              edgeStyle: LinearEdgeStyle.bothFlat,
+              color: Colors.transparent,
+            ),
+            markerPointers: <LinearMarkerPointer>[
+              LinearShapePointer(
+                value: aqvalue.toDouble(),
+                shapeType: LinearShapePointerType.triangle,
+                color: _getPointerColor(aqvalue),
+                borderColor: Colors.white,
+                borderWidth: 3,
+                position: LinearElementPosition.cross,
+                width: 40,
+                height: 40,
+              ),
+            ],
+            ranges: <LinearGaugeRange>[
+              LinearGaugeRange(
+                edgeStyle: LinearEdgeStyle.startCurve,
+                startValue: 0,
+                endValue: 50,
+                color: Colors.green,
+                startWidth: 45,
+                endWidth: 45,
+              ),
+              LinearGaugeRange(
+                startValue: 50,
+                endValue: 100,
+                color: Colors.orange,
+                startWidth: 45,
+                endWidth: 45,
+              ),
+              LinearGaugeRange(
+                startValue: 100,
+                endValue: 150,
+                color: Colors.deepOrange,
+                startWidth: 45,
+                endWidth: 45,
+              ),
+              LinearGaugeRange(
+                edgeStyle: LinearEdgeStyle.endCurve,
+                startValue: 150,
+                endValue: 200,
+                color: Colors.red,
+                startWidth: 45,
+                endWidth: 45,
+              ),
+            ],
+            labelPosition: LinearLabelPosition.inside,
+            axisLabelStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+            ),
+          ),
+        ],
       ),
-    
     );
-    
   }
 
-  Color _getPointerColor(double value) {
-    if (value <= goodMaxValue) {
+  Color _getPointerColor(int value) {
+    if (value <= 50) {
       return Colors.green;
-    } else if (value <= moderateMaxValue) {
+    } else if (value <= 100) {
       return Colors.orange;
-    } else if (value <= seriousMaxValue) {
+    } else if (value <= 150) {
       return Colors.deepOrange;
     } else {
       return Colors.red;
