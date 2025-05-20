@@ -210,7 +210,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12), 
       child: BackdropFilter(
-             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
           padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -313,13 +313,13 @@ class _AirQualityAppState extends State<AirQualityApp> {
   Widget _buildEnvironmentCard(String title, String value, String iconPath, String status, Color statusColor) {
     return
     
-     ClipRRect(
+    ClipRRect(
       borderRadius: BorderRadius.circular(12), 
 
-       child: BackdropFilter(
-             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+      child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
 
-         child: Container(
+      child: Container(
       padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),

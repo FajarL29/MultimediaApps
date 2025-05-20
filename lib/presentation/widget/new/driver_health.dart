@@ -11,6 +11,8 @@ import 'package:multimedia_apps/presentation/widget/driverhealth/heartratetablew
 import 'package:multimedia_apps/presentation/widget/driverhealth/respiratorywidget.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/spo2widget.dart';
 import 'package:multimedia_apps/presentation/widget/driverhealth/temperature.dart';
+import 'package:multimedia_apps/presentation/widget/driverhealth/grafik_data.dart';
+
 
 class HeartRateApp extends StatefulWidget {
   const HeartRateApp({super.key});
@@ -263,8 +265,8 @@ void _checkAndShowPopupOnce(BuildContext context) {
                           child: HeartRateWidget(heartRateStream: _heartRateService.heartRateStream),
                         ),
                         Expanded(
-                          child: HeartRateTableWidget(heartRateStream: _heartRateService.heartRateStream),
-                        ),
+                      child: HeartRateApp1(),
+                    ),
                       ],
                     ),
                   ),

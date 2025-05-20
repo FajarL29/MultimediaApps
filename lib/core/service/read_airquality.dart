@@ -182,7 +182,7 @@ void sendData(Map<String,dynamic> payload ) {
             print("Invalid or incomplete data: $line");
           }
           break;
-             case 'PM10':
+          case 'PM10':
           double? pm = double.tryParse(line[1]);
           if (pm != null) {
             _pM10Controller.add(pm); // Emit valid heart rate
