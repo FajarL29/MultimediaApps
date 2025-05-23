@@ -79,6 +79,7 @@ class _MapsState extends State<MapsComponent> {
                 bottom: 40,
                 right: 40,
                 child: FloatingActionButton(
+                    heroTag: 'map',
                     backgroundColor: Colors.red,
                     child: const Icon(
                       Icons.location_on_outlined,

@@ -265,8 +265,12 @@ void _checkAndShowPopupOnce(BuildContext context) {
                           child: HeartRateWidget(heartRateStream: _heartRateService.heartRateStream),
                         ),
                         Expanded(
-                      child: HeartRateApp1(),
-                    ),
+  child: Padding(
+    padding: const EdgeInsets.only(right: 16.0),
+    child: HeartRateApp1(),
+  ),
+),
+
                       ],
                     ),
                   ),
