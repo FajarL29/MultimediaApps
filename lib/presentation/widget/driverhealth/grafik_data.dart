@@ -12,44 +12,71 @@ class _HeartRateApp1State extends State<HeartRateApp1> {
   List<FlSpot> _chartData = [];
   List<String> _timeLabels = [];
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadDataFromFile();
+  //   //Timer.periodic(const Duration(seconds: 5), (_) => _loadDataFromFile());
+  // }
+
+  // Future<void> _loadDataFromFile() async {
+  //   final content = await FileStorageHelper.readHealthData();
+  //   final lines = content.split('\n').where((line) => line.trim().isNotEmpty).toList();
+
+  //   final List<FlSpot> spots = [];
+  //   final List<String> timeLabels = [];
+
+  //   int index = 0;
+  //   for (final line in lines) {
+  //     try {
+  //       if (line.contains("BPM")) {
+  //         final parts = line.split(' - ');
+  //         if (parts.length != 2) continue;
+
+  //         final time = DateTime.parse(parts[0]);
+  //         final value = int.parse(parts[1].replaceAll('BPM:', '').trim());
+
+  //         spots.add(FlSpot(index.toDouble(), value.toDouble()));
+  //         timeLabels.add("${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}");
+  //         index++;
+  //       }
+  //     } catch (e) {
+  //       debugPrint('❌ Gagal parsing line: $line, error: $e');
+  //     }
+  //   }
+
+  //   setState(() {
+  //     _chartData = spots;
+  //     _timeLabels = timeLabels;
+  //   });
+  // }
+
+
   @override
-  void initState() {
-    super.initState();
-    _loadDataFromFile();
-    Timer.periodic(const Duration(seconds: 5), (_) => _loadDataFromFile());
+void initState() {
+  super.initState();
+  _loadDummyData();
+  // Jika ingin tetap load dari file, uncomment baris berikut
+  // _loadDataFromFile();
+  // Timer.periodic(const Duration(seconds: 5), (_) => _loadDataFromFile());ddddd
+}
+
+void _loadDummyData() {
+  final List<FlSpot> dummySpots = [];
+  final List<String> dummyLabels = [];
+
+  for (int i = 0; i < 10; i++) {
+    final bpm = 70 + i * 2; // nilai dummy
+    dummySpots.add(FlSpot(i.toDouble(), bpm.toDouble()));
+    dummyLabels.add("12:0${i}"); // jam dummy
   }
 
-  Future<void> _loadDataFromFile() async {
-    final content = await FileStorageHelper.readHealthData();
-    final lines = content.split('\n').where((line) => line.trim().isNotEmpty).toList();
+  setState(() {
+    _chartData = dummySpots;
+    _timeLabels = dummyLabels;
+  });
+}
 
-    final List<FlSpot> spots = [];
-    final List<String> timeLabels = [];
-
-    int index = 0;
-    for (final line in lines) {
-      try {
-        if (line.contains("BPM")) {
-          final parts = line.split(' - ');
-          if (parts.length != 2) continue;
-
-          final time = DateTime.parse(parts[0]);
-          final value = int.parse(parts[1].replaceAll('BPM:', '').trim());
-
-          spots.add(FlSpot(index.toDouble(), value.toDouble()));
-          timeLabels.add("${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}");
-          index++;
-        }
-      } catch (e) {
-        debugPrint('❌ Gagal parsing line: $line, error: $e');
-      }
-    }
-
-    setState(() {
-      _chartData = spots;
-      _timeLabels = timeLabels;
-    });
-  }
 
   Widget _buildLineChart(BuildContext context) {
     return AspectRatio(
@@ -111,7 +138,7 @@ class _HeartRateApp1State extends State<HeartRateApp1> {
     );
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return _chartData.isNotEmpty
         ? _buildLineChart(context)

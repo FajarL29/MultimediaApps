@@ -22,9 +22,9 @@ class _SpeedDashboardState extends State<SpeedDashboard> {
                 decoration: BoxDecoration(
                   color: Color(0xFF334EAC).withOpacity(0.75),
                   image: DecorationImage(
-                    image: AssetImage('assets/images/yaris.png'),
-                    fit: BoxFit.none,
-                    scale: 1.8,
+                    image: AssetImage('assets/images/yaris1.webp'),
+    
+                    scale: 0.2,
                     alignment: Alignment.center, // Gambar tetap di tengah
                   ),
                 ),
