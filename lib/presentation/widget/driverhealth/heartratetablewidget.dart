@@ -43,8 +43,7 @@ class _HeartRateTableWidgetState extends State<HeartRateTableWidget> {
 
   @override
   void dispose() {
-    _subscription
-        .cancel(); // Cancel subscription to avoid updates after disposal
+    _subscription.cancel(); // Cancel subscription to avoid updates after disposal
     super.dispose();
   }
 
@@ -80,26 +79,28 @@ class _HeartRateTableWidgetState extends State<HeartRateTableWidget> {
     return Center(
       child: Card(
         elevation: 4,
-        margin: const EdgeInsets.all(16),
+        color: const Color(0xFF334EAC),
+        margin: const EdgeInsets.all(10),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Heart Rate Summary',
+                'Summary',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 16),
+              //const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildStatItem('Max BPM', stats['max']!),
-                  _buildStatItem('Min BPM', stats['min']!),
-                  _buildStatItem('Average BPM', stats['average']!),
+                  Flexible(child: _buildStatItem('Max BPM', stats['max']!)),
+                  Flexible(child: _buildStatItem('Min BPM', stats['min']!)),
+                  Flexible(child: _buildStatItem('Average BPM', stats['average']!)),
                 ],
               ),
             ],
@@ -112,20 +113,21 @@ class _HeartRateTableWidgetState extends State<HeartRateTableWidget> {
   // Helper method to build a stat item widget
   Widget _buildStatItem(String label, String value) {
     return Column(
+      mainAxisSize: MainAxisSize.min, // Ensure the column takes minimum space
       children: [
         Text(
           value,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.blue,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 14,
             color: Colors.grey,
           ),
         ),

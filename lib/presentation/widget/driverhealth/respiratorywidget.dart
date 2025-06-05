@@ -10,44 +10,43 @@ class RespirationRateWidget extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(16),
+      color: Color(0xFF213371).withOpacity(0.75),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(45),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              textAlign: TextAlign.center,
-              'Respiration Rate''\n',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  respirationRate < 12 || respirationRate > 20
-                      ? Icons.warning
-                      : Icons.air,
-                  color: respirationRate < 12 || respirationRate > 20
-                      ? Colors.red
-                      : Colors.blue,
-                  size: 50,
+                Image.asset(
+                   'assets/images/lungs.png',
+                  width: 150, // Sesuaiin ukuran
+                  height: 150,
+                  // color: respirationRate < 12 || respirationRate > 20
+                  //     ? Colors.red
+                  //     : Colors.blue,
                 ),
-                const SizedBox(width: 8),
-                Text(
+                const SizedBox(height: 15),
+
+                const Text(
+              textAlign: TextAlign.center,
+              'Respiration''\n''Rate',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+
+            Text(
                   textAlign: TextAlign.center,
                   '$respirationRate bpm',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: respirationRate < 12 || respirationRate > 20
                         ? Colors.red
                         : Colors.blue,
                   ),
                 ),
-              ],
-            ),
             const SizedBox(height: 8),
             Text(
               textAlign: TextAlign.center,
@@ -63,6 +62,12 @@ class RespirationRateWidget extends StatelessWidget {
                     : Colors.grey,
               ),
             ),
+
+
+              ],
+            ),
+            
+            
           ],
         ),
       ),

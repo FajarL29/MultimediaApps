@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:multimedia_apps/core/extension/extension.dart';
-import 'package:multimedia_apps/presentation/widget/mainpage/date_time.dart';
 import 'package:multimedia_apps/presentation/widget/mainpage/speed2_component.dart';
 // import 'package:multimedia_apps/presentation/widget/mainpage/speed_component.dart';
 import 'package:multimedia_apps/presentation/widget/mainpage/weather_component.dart';
@@ -22,8 +21,8 @@ class _DashboardUtilitiesPageState extends State<DashboardUtilitiesPage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            20.heightSpace,
-            const DateTimeWidget(),
+            // 20.heightSpace,
+            // const DateTimeWidget(),
             20.heightSpace,
             const Expanded(flex: 5, child: SpeedDashboard()),
             20.heightSpace,

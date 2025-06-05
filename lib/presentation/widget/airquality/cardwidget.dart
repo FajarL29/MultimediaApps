@@ -23,25 +23,14 @@ class Cardwidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
+      color: Color(0xFF12A8FF).withOpacity(0.30),
       margin: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isAlert
-                ? [Colors.black, Color.fromARGB(255, 8, 0, 62)]
-                : [Color.fromARGB(255, 8, 0, 62), Colors.black],
-          ),
-          borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-            color: Colors.white, // Warna border putih
-            width: 1, // Ketebalan border
-          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +45,7 @@ class Cardwidget extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 20),
+            //const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -66,22 +55,23 @@ class Cardwidget extends StatelessWidget {
                 '${value.toStringAsFixed(1)}$unit',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 40,
                   fontWeight: FontWeight.bold,
-                  color: Colors.lightBlueAccent,
+                  color: Colors.white,
                 ),
               ),
 
               ],
             ),
             if (alertMessage != null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Text(
                 textAlign: TextAlign.center,
                 alertMessage!,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
                 ),
               ),
             ],

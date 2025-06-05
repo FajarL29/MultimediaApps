@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+
+class SensorProgress extends StatelessWidget {
+  final bool isFingerPlaced;
+  final bool spo2Done;
+  final bool rrDone;
+  final bool hrDone;
+  final bool bpDone;
+
+  const SensorProgress({
+    super.key,
+    required this.isFingerPlaced,
+    required this.spo2Done,
+    required this.rrDone,
+    required this.hrDone,
+    required this.bpDone,
+  });
+
+  Widget buildStep(String label, bool done) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(
+            done ? Icons.check_circle : Icons.radio_button_unchecked,
+            color: done ? Colors.green : Colors.grey,
+          ),
+          const SizedBox(width: 10),
+          Text(label, style: TextStyle(fontSize: 16)),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildStep("1. Letakkan jari di sensor", isFingerPlaced),
+        buildStep("2. SpO2 terbaca", spo2Done),
+        buildStep("3. Respiratory Rate terbaca", rrDone),
+        buildStep("4. Heart Rate terbaca", hrDone),
+        buildStep("5. Tekanan Darah terbaca", bpDone),
+      ],
+    );
+  }
+}

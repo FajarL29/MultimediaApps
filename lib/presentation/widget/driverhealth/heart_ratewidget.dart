@@ -11,7 +11,6 @@ class HeartRateWidget extends StatefulWidget {
 class _HeartRateWidgetState extends State<HeartRateWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _animation;
   int _currentHeartRate = 0; // Default heart rate
   final Map<DateTime, List<int>> _heartRateHistory = {};
   @override
@@ -24,9 +23,6 @@ class _HeartRateWidgetState extends State<HeartRateWidget>
       duration: const Duration(milliseconds: 1000), // Default for 60 BPM
     );
 
-    _animation = Tween<double>(begin: 1.0, end: 1.5).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
 
     widget.heartRateStream.listen((rate) {
       setState(() {
@@ -69,25 +65,25 @@ class _HeartRateWidgetState extends State<HeartRateWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+  return Padding(
+    padding: const EdgeInsets.all(16), // Menambahkan padding 16
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _animation.value,
-              child: Icon(Icons.favorite, color: Colors.red, size: 80),
-            );
-          },
+        Image.asset(
+          'assets/images/heartbeat.png',
+          width: 90, // Sesuaikan ukuran
+          height: 90,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(width: 20), // Mengubah height menjadi width untuk jarak horizontal
         Text(
           '$_currentHeartRate BPM',
           style: TextStyle(
-              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
+
 }

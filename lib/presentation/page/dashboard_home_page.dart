@@ -26,9 +26,8 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        // color: Color.fromARGB(255, 8, 3, 26),
         image: DecorationImage(
-          image: AssetImage('assets/images/background_head_unit.jpg'),
+          image: AssetImage("assets/images/background_homescreen.jpg"),
           fit: BoxFit.cover,
         ),
       ),

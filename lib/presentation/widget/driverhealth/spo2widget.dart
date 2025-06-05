@@ -9,45 +9,41 @@ class SpO2Widget extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(16),
+      color: Color(0xFF213371).withOpacity(0.75),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(45.5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              textAlign: TextAlign.center,
-              'SpO2' ,  
-              
-              style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold ),
-            ),
-            const Text(
-              textAlign: TextAlign.center,
-              
-              '(Oxygen Saturation)',
-              style: TextStyle(fontSize: 17, ),
-            ),
-            const SizedBox(height: 16),
-            Row(
+            
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.favorite,
-                  color: spO2rate < 90 ? Colors.red : Colors.green,
-                  size: 50,
+                Image.asset(
+                  'assets/images/spo2.png',
+                  width: 150, // Sesuaiin ukuran
+                  height: 150,
+                  // color: spO2rate < 90 ? Colors.red : Colors.green,
+                  
                 ),
-                const SizedBox(width: 8),
-                Text(
+                const SizedBox(height: 15),
+
+                const Text(
+              textAlign: TextAlign.center,
+              'SpO2 ''\n''(Oxygen Saturation)',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+               
+             Text(
                   textAlign: TextAlign.center,
                   '${spO2rate.toStringAsFixed(1)}%',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: spO2rate < 90 ? Colors.red : Colors.green,
                   ),
                 ),
-              ],
-            ),
             const SizedBox(height: 8),
             Text(
               textAlign: TextAlign.center,
@@ -61,6 +57,11 @@ class SpO2Widget extends StatelessWidget {
                 color: spO2rate < 90 ? Colors.red : Colors.grey,
               ),
             ),
+
+              ],
+            ),
+            
+            
           ],
         ),
       ),
