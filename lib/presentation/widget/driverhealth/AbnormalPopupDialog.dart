@@ -1,7 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class AbnormalPopupDialog extends StatelessWidget {
+class AbnormalPopupDialog extends StatefulWidget {
   final String title;
   final String message;
   final bool isHealthy;
@@ -14,6 +15,21 @@ class AbnormalPopupDialog extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<AbnormalPopupDialog> createState() => _AbnormalPopupDialogState();
+}
+
+class _AbnormalPopupDialogState extends State<AbnormalPopupDialog> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -22,7 +38,7 @@ class AbnormalPopupDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Lottie.asset(
-            isHealthy
+            widget.isHealthy
                 ? 'assets/lottie/success.json'
                 : 'assets/lottie/warning.json',
             width: 100,
@@ -31,17 +47,17 @@ class AbnormalPopupDialog extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            title,
+            widget.title,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isHealthy ? Colors.green : Colors.red,
+              color: widget.isHealthy ? Colors.green : Colors.red,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 10),
           Text(
-            message,
+            widget.message,
             style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),
@@ -53,7 +69,7 @@ class AbnormalPopupDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
           style: TextButton.styleFrom(
             foregroundColor: Colors.white,
-            backgroundColor: isHealthy ? Colors.green : Colors.red,
+            backgroundColor: widget.isHealthy ? Colors.green : Colors.red,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           child: const Padding(

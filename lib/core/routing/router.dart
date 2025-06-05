@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multimedia_apps/core/routing/navigation_route.dart';
+import 'package:multimedia_apps/core/service/read_heartrate2.dart';
+import 'package:multimedia_apps/main.dart';
 import 'package:multimedia_apps/presentation/page/bluetooth.dart';
 import 'package:multimedia_apps/presentation/page/dashboard_menu.dart';
 import 'package:multimedia_apps/presentation/page/homepage.dart';
@@ -12,13 +14,15 @@ final parentNavKey = GlobalKey<NavigatorState>();
 final homeMultiNavKey = GlobalKey<NavigatorState>();
 final navigationNavKey = GlobalKey<NavigatorState>();
 
-GoRouter goRouter() {
+
+GoRouter goRouter(HeartRateService2 heartRateService) {
   final router = GoRouter(
     navigatorKey: parentNavKey,
     debugLogDiagnostics: true,
     restorationScopeId: 'router',
     initialLocation: '/',
     routes: $appRoutes,
+    observers: [routeObserver],
   );
 
   return router;
@@ -173,7 +177,7 @@ class HomeNavRouteData extends StatefulShellRouteData {
   Page<void> pageBuilder(BuildContext context, GoRouterState state,
       StatefulNavigationShell navigationShell) {
     return FadeTransitionPage(
-        state.pageKey, HomePage(navigationShell: navigationShell));
+        state.pageKey, HomePage(navigationShell: navigationShell, heartRateService: heartRateService));
   }
 
   static const String $restorationScopeId = 'home_nav_shell';
@@ -208,7 +212,7 @@ class DriverHealthRoute extends GoRouteData {
   const DriverHealthRoute();
   static const String path = "DriverHealth";
   @override
-  Widget build(BuildContext context, GoRouterState state) => HeartRateApp();
+  Widget build(BuildContext context, GoRouterState state) => HeartRateApp(heartRateService: heartRateService,);
 }
 
 class AirQualityRoute extends GoRouteData {

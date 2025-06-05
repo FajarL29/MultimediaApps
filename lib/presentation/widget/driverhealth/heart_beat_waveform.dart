@@ -1,15 +1,19 @@
 //C:\Users\fajar.firdaus\MultimediaApps\lib\presentation\widget\driverhealth\heart_beat_waveform.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:multimedia_apps/core/service/read_heartrate2.dart';
 
 class HeartBeatWaveform extends StatefulWidget {
   final Stream<int> heartRateStream;
   final Stream<bool> fingerDetectedStream;
+  final bool initialFingerDetected;
 
   const HeartBeatWaveform({
     super.key,
     required this.heartRateStream,
-    required this.fingerDetectedStream,
+    required this.fingerDetectedStream, 
+    required HeartRateService2 heartRateService, 
+    required this.initialFingerDetected,
   });
 
   @override
@@ -22,6 +26,7 @@ class _HeartBeatWaveformState extends State<HeartBeatWaveform>
   late List<double> _points;
   late StreamSubscription<bool> _fingerDetectedSubscription;
   late StreamSubscription<int> _heartRateSubscription;
+  late VoidCallback _animationListener;
 
   bool _fingerDetected = false;
   int _ecgIndex = 0;
@@ -35,46 +40,60 @@ class _HeartBeatWaveformState extends State<HeartBeatWaveform>
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _points = List.generate(maxPoints, (_) => 0.0, growable: true);
+void initState() {
+  super.initState();
+  _points = List.generate(maxPoints, (_) => 0.0);
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 30),
-    )..addListener(() {
-        setState(() {
-          _generateECGWaveform();
-        });
-      });
-
-    _fingerDetectedSubscription = widget.fingerDetectedStream.listen((fingerDetected) {
-      debugPrint('Finger detected: $fingerDetected');
+_controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 30),
+  );
+  _animationListener = () { 
+    if(!mounted) return;
       setState(() {
-        _fingerDetected = fingerDetected;
-        if (_fingerDetected) {
-          _controller.repeat();
-        } else {
-          _controller.stop();
-          _resetWaveform();
-        }
+        _generateECGWaveform();
       });
-    });
+    };
+    _controller.addListener(_animationListener); 
+    
+  _fingerDetected = widget.initialFingerDetected;
+  if (_fingerDetected) {
+    _controller.repeat(); // Start animation langsung
+  }
 
-    _heartRateSubscription = widget.heartRateStream.listen((bpm) {
-      if (bpm > 30 && bpm < 220) {
-        int intervalMs = (60000 / bpm).round();
-        int perStep = intervalMs ~/ _ecgPattern.length;
-        _controller.duration = Duration(milliseconds: perStep.clamp(10, 100));
+  
+
+  _fingerDetectedSubscription =
+      widget.fingerDetectedStream.listen((fingerDetected) {
+    if (!mounted) return;
+    setState(() {
+      _fingerDetected = fingerDetected;
+      if (_fingerDetected) {
+        _controller.repeat();
+      } else {
+        _controller.stop();
+        _resetWaveform();
       }
     });
-  }
+  });
+
+  _heartRateSubscription = widget.heartRateStream.listen((bpm) {
+    if (bpm > 30 && bpm < 220) {
+      int intervalMs = (60000 / bpm).round();
+      int perStep = intervalMs ~/ _ecgPattern.length;
+      _controller.duration = Duration(milliseconds: perStep.clamp(10, 100));
+    }
+  });
+}
+
 
   void _generateECGWaveform() {
-    _points.removeAt(0);
-    _points.add(_ecgPattern[_ecgIndex] * 4); // scale the amplitude
-    _ecgIndex = (_ecgIndex + 1) % _ecgPattern.length;
-  }
+  if (!_controller.isAnimating) return;
+  _points.removeAt(0);
+  _points.add(_ecgPattern[_ecgIndex] * 4);
+  _ecgIndex = (_ecgIndex + 1) % _ecgPattern.length;
+}
+
 
   void _resetWaveform() {
     _points = List.generate(maxPoints, (_) => 0.0);
@@ -83,6 +102,7 @@ class _HeartBeatWaveformState extends State<HeartBeatWaveform>
 
   @override
   void dispose() {
+    _controller.removeListener(_animationListener);
     _controller.dispose();
     _fingerDetectedSubscription.cancel();
     _heartRateSubscription.cancel();

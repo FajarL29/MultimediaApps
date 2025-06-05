@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class GaugeWidget extends StatelessWidget {
   final double aqvalue;
@@ -60,7 +59,7 @@ elevation: 4,
                 
                 const SizedBox(width: 12),
                 Text(
-                '${aqvalue.toStringAsFixed(1)}',
+                aqvalue.toStringAsFixed(1),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 40,

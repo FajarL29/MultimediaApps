@@ -1,17 +1,14 @@
   import 'dart:async';
-  //import 'dart:convert';
-  //import 'dart:convert';
   import 'dart:developer';
-  //import 'dart:typed_data';
-
-  //import 'package:flutter/foundation.dart';
   import 'package:libserialport/libserialport.dart';
   import 'package:multimedia_apps/core/service/file_stroge_helper.dart';
 
   class HeartRateService2 {
-    late SerialPort _port; // Replace with your port
+
+    late SerialPort _port; 
     late SerialPortReader _reader;
     bool fingerDetected = false;
+    bool get isFingerDetected => fingerDetected;
     final StreamController<int> _heartRateController =
         StreamController<int>.broadcast();
     final StreamController<int> _spO2Controller =
@@ -31,7 +28,6 @@
 
     HeartRateService2();
 
-    // Expose the stream for widgets to listen to
     Stream<int> get heartRateStream => _heartRateController.stream;
     Stream<int> get spO2RateStream => _spO2Controller.stream;
     Stream<double> get bodyTempStream => _bodyTempController.stream;
@@ -40,6 +36,8 @@
     Stream<int> get respRateStream => _rrController.stream;
     Stream<bool> get fingerDetectedStream => fingerDetectedController.stream;
 
+
+//----------------------------------------------For in the windows------------------------------------------
     void startListening() {
     try {
       _port = SerialPort("COM25");
@@ -64,7 +62,7 @@
   }
 
 
-
+//----------------------------------------For in the Linux--------------------------------------
   //   void startListening() {
   //   try {
   //     SerialPort? tempPort;
@@ -107,10 +105,7 @@
   // }
 
     void processRawData() {
-      // Split the data into lines (assuming '\n' is the delimiter)
       final lines = rawData.split('\n');
-
-      // Process all complete lines except the last one (it may be incomplete)
       for (int i = 0; i < lines.length - 1; i++) {
         final line = lines[i].split(':');
         final String check = line[0].trim();

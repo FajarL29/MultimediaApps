@@ -4,78 +4,99 @@ import 'package:flutter/material.dart';
 import 'package:multimedia_apps/core/service/file_stroge_helper.dart';
 
 class HeartRateApp1 extends StatefulWidget {
+  const HeartRateApp1({super.key});
+
   @override
-  _HeartRateApp1State createState() => _HeartRateApp1State();
+  HeartRateApp1State createState() => HeartRateApp1State();
 }
 
-class _HeartRateApp1State extends State<HeartRateApp1> {
+
+class HeartRateApp1State extends State<HeartRateApp1> {
   List<FlSpot> _chartData = [];
   List<String> _timeLabels = [];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadDataFromFile();
-  //   //Timer.periodic(const Duration(seconds: 5), (_) => _loadDataFromFile());
-  // }
-
-  // Future<void> _loadDataFromFile() async {
-  //   final content = await FileStorageHelper.readHealthData();
-  //   final lines = content.split('\n').where((line) => line.trim().isNotEmpty).toList();
-
-  //   final List<FlSpot> spots = [];
-  //   final List<String> timeLabels = [];
-
-  //   int index = 0;
-  //   for (final line in lines) {
-  //     try {
-  //       if (line.contains("BPM")) {
-  //         final parts = line.split(' - ');
-  //         if (parts.length != 2) continue;
-
-  //         final time = DateTime.parse(parts[0]);
-  //         final value = int.parse(parts[1].replaceAll('BPM:', '').trim());
-
-  //         spots.add(FlSpot(index.toDouble(), value.toDouble()));
-  //         timeLabels.add("${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}");
-  //         index++;
-  //       }
-  //     } catch (e) {
-  //       debugPrint('❌ Gagal parsing line: $line, error: $e');
-  //     }
-  //   }
-
-  //   setState(() {
-  //     _chartData = spots;
-  //     _timeLabels = timeLabels;
-  //   });
-  // }
-
+  Timer? _updateTimer;
+  
 
   @override
-void initState() {
-  super.initState();
-  _loadDummyData();
-  // Jika ingin tetap load dari file, uncomment baris berikut
-  // _loadDataFromFile();
-  // Timer.periodic(const Duration(seconds: 5), (_) => _loadDataFromFile());ddddd
-}
-
-void _loadDummyData() {
-  final List<FlSpot> dummySpots = [];
-  final List<String> dummyLabels = [];
-
-  for (int i = 0; i < 10; i++) {
-    final bpm = 70 + i * 2; // nilai dummy
-    dummySpots.add(FlSpot(i.toDouble(), bpm.toDouble()));
-    dummyLabels.add("12:0${i}"); // jam dummy
+  void initState() {
+    super.initState();
+    _loadDataFromFile();
+    _updateTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+    _loadDataFromFile();
+  });
+    //Timer.periodic(const Duration(seconds: 5), (_) => _loadDataFromFile());
   }
 
-  setState(() {
-    _chartData = dummySpots;
-    _timeLabels = dummyLabels;
-  });
+  @override
+void dispose() {
+  _updateTimer?.cancel();
+  super.dispose();
 }
+
+ void resetChart() {
+    setState(() {
+      _chartData.clear();
+      _timeLabels.clear();
+    });
+  }
+
+  Future<void> _loadDataFromFile() async {
+    final content = await FileStorageHelper.readHealthData();
+    final lines = content.split('\n').where((line) => line.trim().isNotEmpty).toList();
+
+    final List<FlSpot> spots = [];
+    final List<String> timeLabels = [];
+
+    int index = 0;
+    for (final line in lines) {
+      try {
+        if (line.contains("BPM")) {
+          final parts = line.split(' - ');
+          if (parts.length != 2) continue;
+
+          final time = DateTime.parse(parts[0]);
+          final value = int.parse(parts[1].replaceAll('BPM:', '').trim());
+
+          spots.add(FlSpot(index.toDouble(), value.toDouble()));
+          timeLabels.add("${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}");
+          index++;
+        }
+      } catch (e) {
+        debugPrint('❌ Gagal parsing line: $line, error: $e');
+      }
+    }
+
+    setState(() {
+      _chartData = spots;
+      _timeLabels = timeLabels;
+    });
+  }
+
+
+//   @override
+// void initState() {
+//   super.initState();
+//   _loadDummyData();
+//   // Jika ingin tetap load dari file, uncomment baris berikut
+//   // _loadDataFromFile();
+//   // Timer.periodic(const Duration(seconds: 5), (_) => _loadDataFromFile());ddddd
+// }
+
+// void _loadDummyData() {
+//   final List<FlSpot> dummySpots = [];
+//   final List<String> dummyLabels = [];
+
+//   for (int i = 0; i < 10; i++) {
+//     final bpm = 70 + i * 2; // nilai dummy
+//     dummySpots.add(FlSpot(i.toDouble(), bpm.toDouble()));
+//     dummyLabels.add("12:0${i}"); // jam dummy
+//   }
+
+//   setState(() {
+//     _chartData = dummySpots;
+//     _timeLabels = dummyLabels;
+//   });
+// }
 
 
   Widget _buildLineChart(BuildContext context) {
