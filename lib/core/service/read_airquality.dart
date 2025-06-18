@@ -47,7 +47,7 @@ class ReadAirquality {
 
 void startListening() {
   try {
-    _port = SerialPort("COM10"); // Ganti "COM4" dengan port kamu, atau "/dev/ttyUSB0" di Linux
+    _port = SerialPort("COM10"); 
     _port.openReadWrite();
 
     _port.config = SerialPortConfig()
