@@ -1,5 +1,7 @@
   import 'dart:async';
+import 'dart:convert';
   import 'dart:developer';
+import 'dart:typed_data';
   import 'package:libserialport/libserialport.dart';
   import 'package:multimedia_apps/core/service/file_stroge_helper.dart';
 
@@ -38,50 +40,10 @@
 
 
 //----------------------------------------------For in the windows------------------------------------------
-    void startListening() {
-    try {
-      _port = SerialPort("COM25");
-      _port.openReadWrite();
-
-      _port.config = SerialPortConfig()
-        ..baudRate = 115200
-        ..bits = 8
-        ..stopBits = 1
-        ..parity = SerialPortParity.none
-        ..setFlowControl(SerialPortFlowControl.none);
-
-      _reader = SerialPortReader(_port);
-      _reader.stream.listen((data) {
-        log(String.fromCharCodes(data));
-        rawData += String.fromCharCodes(data);
-        processRawData();
-      });
-    } catch (e, s) {
-      print('Error during port setup: $e $s');
-    }
-  }
-
-
-//----------------------------------------For in the Linux--------------------------------------
   //   void startListening() {
   //   try {
-  //     SerialPort? tempPort;
-  //     final listPort = SerialPort.availablePorts;
-  //     for (var port in listPort) {
-  //       var p = SerialPort(port);
-  //       log('SERIAL : ${p.serialNumber}');
-  //       if (p.serialNumber == '5959074742') {
-  //         tempPort = SerialPort(p.name!);
-  //         p.close();
-  //       }
-  //     }
-
-  //     if (tempPort == null) {
-  //       throw Exception('Port not found');
-  //     }
-
-  //     _port = tempPort; // 🔹 Inisialisasi _port se digunakan
-  //     _port.openReadWrite();     
+  //     _port = SerialPort("COM25");
+  //     _port.openReadWrite();
 
   //     _port.config = SerialPortConfig()
   //       ..baudRate = 115200
@@ -97,12 +59,52 @@
   //       processRawData();
   //     });
   //   } catch (e, s) {
-  //     if (e.toString() == 'Port not found') {
-  //       rawData += Uint8List.fromList(utf8.encode('Port not found')).toString();
-  //     }
   //     print('Error during port setup: $e $s');
   //   }
   // }
+
+
+//----------------------------------------For in the Linux--------------------------------------
+    void startListening() {
+    try {
+      SerialPort? tempPort;
+      final listPort = SerialPort.availablePorts;
+      for (var port in listPort) {
+        var p = SerialPort(port);
+        log('SERIAL : ${p.serialNumber}');
+        if (p.serialNumber == '5959074742') {
+          tempPort = SerialPort(p.name!);
+          p.close();
+        }
+      }
+
+      if (tempPort == null) {
+        throw Exception('Port not found');
+      }
+
+      _port = tempPort; // 🔹 Inisialisasi _port se digunakan
+      _port.openReadWrite();     
+
+      _port.config = SerialPortConfig()
+        ..baudRate = 115200
+        ..bits = 8
+        ..stopBits = 1
+        ..parity = SerialPortParity.none
+        ..setFlowControl(SerialPortFlowControl.none);
+
+      _reader = SerialPortReader(_port);
+      _reader.stream.listen((data) {
+        log(String.fromCharCodes(data));
+        rawData += String.fromCharCodes(data);
+        processRawData();
+      });
+    } catch (e, s) {
+      if (e.toString() == 'Port not found') {
+        rawData += Uint8List.fromList(utf8.encode('Port not found')).toString();
+      }
+      print('Error during port setup: $e $s');
+    }
+  }
 
     void processRawData() {
       final lines = rawData.split('\n');
