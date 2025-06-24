@@ -36,7 +36,7 @@ class HeartRateService2 {
 
   void startListening() {
     try {
-      _port = SerialPort("COM25");
+      _port = SerialPort("COM28");
       _port.openReadWrite();
 
       _port.config = SerialPortConfig()
