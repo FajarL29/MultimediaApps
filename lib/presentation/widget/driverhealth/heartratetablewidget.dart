@@ -7,10 +7,10 @@ class HeartRateTableWidget extends StatefulWidget {
   const HeartRateTableWidget({required this.heartRateStream, super.key});
 
   @override
-  _HeartRateTableWidgetState createState() => _HeartRateTableWidgetState();
+  HeartRateTableWidgetState createState() => HeartRateTableWidgetState();
 }
 
-class _HeartRateTableWidgetState extends State<HeartRateTableWidget> {
+class HeartRateTableWidgetState extends State<HeartRateTableWidget> {
   final Map<DateTime, List<int>> _heartRateHistory = {};
   late StreamSubscription<int> _subscription;
 
