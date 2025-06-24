@@ -59,6 +59,67 @@ class HeartRateService2 {
     }
   }
 
+//   void startListening() {
+//   try {
+//     final listPort = SerialPort.availablePorts;
+//     print('Available Ports: $listPort'); // Debugging
+
+//     for (var port in listPort) {
+//       var p = SerialPort(port);
+//       print('Checking port: ${p.name}, Serial: ${p.serialNumber}');
+
+//       if (p.serialNumber == '5735016773') {
+//         _port = SerialPort(p.name!);
+//         p.close();
+//         break; // Exit loop once found
+//       }
+//     }
+
+//     if (_port == null) {
+//       print('❌ Error: Serial port not found!');
+//       return;
+//     }
+
+//     print('✅ Selected Port: ${_port.name}');
+
+//     if (!_port.openReadWrite()) {
+//       print('❌ Error: Failed to open port ${_port.name}');
+//       return;
+//     }
+
+//     print('✅ Port opened successfully.');
+
+//     final config = _port.config;
+//     config.baudRate = 115200;
+//     _port.config = config;
+
+//     _reader = SerialPortReader(_port);
+    
+//     // Check if _reader is successfully initialized
+//     if (_reader == null) {
+//       print('❌ Error: Failed to initialize SerialPortReader.');
+//       return;
+//     }
+
+//     print('🎧 Listening to stream...');
+    
+//     _reader.stream.listen((data) {
+//       rawData += String.fromCharCodes(data);
+//       log('DATA : $rawData');
+
+//       processRawData();
+//     }, onError: (error) {
+//       print('❌ Stream error: $error');
+//     }, onDone: () {
+//       print('✅ Stream closed.');
+//     });
+
+
+//   } catch (e) {
+//     print('❌ Exception during port setup: $e');
+//   }
+// }
+
   void _processRawData() {
     final lines = _rawBuffer.split('\n');
 
