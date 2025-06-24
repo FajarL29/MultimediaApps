@@ -1,12 +1,8 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-// import 'package:multimedia_apps/core/constant/app_color.dart';
 import 'package:multimedia_apps/core/service/read_airquality.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/airqualitywidget.dart';
-// import 'package:multimedia_apps/presentation/widget/airquality/cardwidget.dart';
-// import 'package:multimedia_apps/presentation/widget/airquality/gaugewidget.dart';
+
 class AirQualityApp extends StatefulWidget {
   const AirQualityApp({super.key});
 
@@ -16,6 +12,8 @@ class AirQualityApp extends StatefulWidget {
 
 class _AirQualityAppState extends State<AirQualityApp> {
   late ReadAirquality _airqualityService;
+  bool isO2On = false;
+  bool isAirPurifierOn = false;
   double _currentco = 0;
   double _currentco2 = 0;
   double _currentpm25 = 0;
@@ -41,19 +39,33 @@ class _AirQualityAppState extends State<AirQualityApp> {
     return 'OFF';
   }
 
-  void toggleDevice(String deviceType) {
-    if (deviceType == 'Air Purifier') {
-      _airqualityService.sendData({
-        'action': _currentApr == 1 ? 'turn_on_relay' : 'turn_off_relay',
-        'relay_code': '6'
-      });
-    } else if (deviceType == 'O2 Concentrator') {
-      _airqualityService.sendData({
-        'action': _currentCor == 1 ? 'turn_on_relay' : 'turn_off_relay',
-        'relay_code': '5'
-      });
-    }
+ void toggleDevice(String deviceType) {
+  if (deviceType == 'Air Purifier' || deviceType == 'Both') {
+    bool newState = !isAirPurifierOn;
+    _airqualityService.sendData({
+      'action': newState ? 'turn_on_relay' : 'turn_off_relay',
+      'relay_code': '6',
+    });
+    setState(() {
+      isAirPurifierOn = newState;
+    });
   }
+
+  if (deviceType == 'O2 Concentrator' || deviceType == 'Both') {
+    bool newState = !isO2On;
+    _airqualityService.sendData({
+      'action': newState ? 'turn_on_relay' : 'turn_off_relay',
+      'relay_code': '5',
+    });
+    setState(() {
+      isO2On = newState;
+    });
+  }
+
+  // Optional: logika tambahan jika kedua perangkat aktif
+  if (isAirPurifierOn && isO2On) {
+  }
+}
 
   @override
   void initState() {
@@ -63,9 +75,6 @@ class _AirQualityAppState extends State<AirQualityApp> {
 
     _airqualityService.coStream.listen((co) {
       setState(() => _currentco = co.toDouble());
-      // if (_currentco > 9) {
-      //   _showAbnormalPopup("High CO Detected", "Carbon Monoxide is above safe levels");
-      // }
     });
 
     _airqualityService.co2Stream.listen((co2) {
@@ -524,32 +533,36 @@ class _AirQualityAppState extends State<AirQualityApp> {
   }
 
   Widget _buildDeviceControls() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: _buildDeviceControlCard(
-            "Air Purifier",
-            "assets/images/airpurifier.png",
-            _currentApr == 0,
-            getAirPurifierStatus() == 'ON',
-            () => toggleDevice('Air Purifier'),
-          ),
+  final bool shouldRecommendPurifier = getAirPurifierStatus() == 'ON' && !isAirPurifierOn;
+  final bool shouldRecommendO2 = getO2ConcentratorStatus() == 'ON' && !isO2On;
+
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Expanded(
+        child: _buildDeviceControlCard(
+          "Air Purifier",
+          "assets/images/airpurifier.png",
+          isAirPurifierOn,
+          shouldRecommendPurifier,
+          () => toggleDevice('Air Purifier'),
         ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildDeviceControlCard(
-            "O2 Concentrator",
-            "assets/images/o2concentrator.png",
-            _currentCor == 0,
-            getO2ConcentratorStatus() == 'ON',
-            () => toggleDevice('O2 Concentrator'),
-          ),
+      ),
+      const SizedBox(width: 16),
+      Expanded(
+        child: _buildDeviceControlCard(
+          "O2 Concentrator",
+          "assets/images/o2concentrator.png",
+          isO2On,
+          shouldRecommendO2,
+          () => toggleDevice('O2 Concentrator'),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
 
   Widget _buildDeviceControlCard(String title, String iconPath, bool isActive, bool isRecommended, VoidCallback onToggle) {
     return GestureDetector(
