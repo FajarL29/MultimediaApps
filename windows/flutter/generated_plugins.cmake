@@ -5,10 +5,16 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   flutter_libserialport
   geolocator_windows
+  media_kit_libs_windows_video
+  media_kit_video
+  screen_retriever_windows
   url_launcher_windows
+  volume_controller
+  window_manager
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  pdfrx
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

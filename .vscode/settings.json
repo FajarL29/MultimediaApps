@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.ignoreCMakeListsMissing": true
+=======
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "C_Cpp.errorSquiggles": "enabled",
+    "cmake.sourceDirectory": "C:/Users/Acer/OneDrive/Documents/GitHub/MultimediaApps/linux/flutter"
+>>>>>>> manual-book
 }
