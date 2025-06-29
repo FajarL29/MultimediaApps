@@ -6,38 +6,69 @@ import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_static/shelf_static.dart';
 
-String? latestLabel; // ✅ Simpan label terakhir
+String? latestLabel;
+String? latestLanguage;
 
 void main() async {
   final router = Router();
 
-  // GET /task?label=...
+  // == Unified GET /task ==
   router.get('/task', (Request request) {
     final label = request.requestedUri.queryParameters['label'];
+    final language = request.requestedUri.queryParameters['language'];
     final poll = request.requestedUri.queryParameters['poll'];
 
     if (poll == 'true') {
-      if (latestLabel != null) {
-        final labelToSend = latestLabel!;
-        latestLabel = null; // hanya kirim sekali
-        return Response.ok(jsonEncode({'message': labelToSend}));
+      if (latestLabel != null && latestLanguage != null) {
+        final result = {
+          'label': latestLabel!,
+          'language': latestLanguage!,
+        };
+        latestLabel = null;
+        latestLanguage = null;
+        return Response.ok(jsonEncode(result),
+            headers: {'Content-Type': 'application/json'});
       } else {
-        return Response.ok(jsonEncode({'message': ''})); // kosong = tidak ada
+        return Response.ok(jsonEncode({'label': '', 'language': ''}),
+            headers: {'Content-Type': 'application/json'});
       }
     }
 
-    if (label == null || label.isEmpty) {
-      return Response(400, body: jsonEncode({'error': 'Label is missing'}));
+    // Validasi parameter wajib
+    if (label == null ||
+        language == null ||
+        label.isEmpty ||
+        language.isEmpty) {
+      return Response.badRequest(
+        body: jsonEncodePretty({
+          "status": "error",
+          "message": "Parameter 'label' dan 'language' wajib ada"
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
     }
 
-    latestLabel = label; // ✅ Simpan label yang dikirim Python
-    print('✅ Label diterima: $label');
+    latestLabel = label;
+    latestLanguage = language;
+
+    print('🎧 == DATA DITERIMA ==');
+    print('🌐 Language: $language');
+    print('💡 Label   : $label');
+
     return Response.ok(
-      jsonEncode({'status': 'OK', 'message': 'Label "$label" received'}),
+      jsonEncode({
+        "status": "success",
+        "message": "Label dan bahasa diterima",
+        "data": {
+          "label": label,
+          "language": language,
+        }
+      }),
+      headers: {'Content-Type': 'application/json'},
     );
   });
 
-  // Serve UI statis dari folder /web
+  // == Static Web Folder ==
   final staticHandler = createStaticHandler(
     'web',
     defaultDocument: 'index.html',
@@ -49,4 +80,9 @@ void main() async {
 
   final server = await serve(handler, InternetAddress.anyIPv4, 5000);
   print('✅ Server listening on http://${server.address.host}:${server.port}');
+}
+
+String jsonEncodePretty(Object data) {
+  const encoder = JsonEncoder.withIndent('  ');
+  return encoder.convert(data);
 }

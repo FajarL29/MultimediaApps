@@ -7,9 +7,15 @@ import 'package:multimedia_apps/core/service/read_heartrate2.dart';
 import 'package:multimedia_apps/main.dart';
 import 'package:multimedia_apps/presentation/page/dashboard_home_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:multimedia_apps/video/Buka_Kap_Mobil/Buka_English.dart';
+import 'package:multimedia_apps/video/Buka_Kap_Mobil/Buka_Indo.dart';
+import 'package:multimedia_apps/video/Buka_Kap_Mobil/Buka_Japan.dart';
+import 'package:multimedia_apps/video/Buka_Tutup_Bensin/Buka_Indo.dart';
+import 'package:multimedia_apps/video/Buka_Tutup_Bensin/Buka_english.dart';
+import 'package:multimedia_apps/video/Buka_Tutup_Bensin/Buka_japan.dart';
 import 'package:multimedia_apps/video/screen1.dart';
 import 'package:multimedia_apps/video/screen2.dart';
-import 'package:pdfrx/pdfrx.dart'; 
+import 'package:pdfrx/pdfrx.dart';
 
 class HomePage extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -29,23 +35,22 @@ class _HomePageState extends State<HomePage> with RouteAware {
   StreamSubscription<bool>? fingerSub;
   int _currentIndex = 0;
   double parentPadding = 20;
-    Timer? timer;
+  Timer? timer;
 
   void _subscribeToFingerDetection() {
-  fingerSub?.cancel(); 
-  fingerSub = widget.heartRateService.fingerDetectedStream.listen((detected) {
-    if (!mounted) return; 
-    final location = GoRouter.of(context)
-        .routerDelegate
-        .currentConfiguration
-        .uri
-        .toString();
-    if (detected && !location.contains("/DriverHealth")) {
-      DriverHealthRoute().go(context);
-    }
-  });
-}
-
+    fingerSub?.cancel();
+    fingerSub = widget.heartRateService.fingerDetectedStream.listen((detected) {
+      if (!mounted) return;
+      final location = GoRouter.of(context)
+          .routerDelegate
+          .currentConfiguration
+          .uri
+          .toString();
+      if (detected && !location.contains("/DriverHealth")) {
+        DriverHealthRoute().go(context);
+      }
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -56,7 +61,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
   @override
   void didPopNext() {
-    _subscribeToFingerDetection(); 
+    _subscribeToFingerDetection();
   }
 
   // void _onItemTapped(int index) {
@@ -75,14 +80,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
   //   }
   // }
 
-    void _onItemTapped(int index) {
+  void _onItemTapped(int index) {
     if (index == 3) {
       _showPdfDialog(context, 'assets/docs/Yaris.pdf');
     } else if (index == 2) {
-Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => MyScreen1()),
-        );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => BukaKapEnglish()),
+      );
     } else {
       setState(() {
         _currentIndex = index;
@@ -102,42 +107,115 @@ Navigator.push(
 
   Future<void> checkServer() async {
     final response = await http.get(
-      Uri.parse("http://192.168.255.153:5000/task?poll=true"),
+      Uri.parse("http://192.168.100.40:5000/task?poll=true"),
     );
+
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final label = data['message'] ?? '';
+      final label = data['label'] ?? '';
+      final language = data['language'] ?? '';
 
-      if (label.contains('buka kap mobil')) {
-        timer?.cancel(); // stop polling sebelum navigasi
+      print('🆗 Polling dapat: label="$label", language="$language"');
 
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => MyScreen1()),
-        );
+      if (label.isEmpty || language.isEmpty) return;
 
-        startPolling(); // polling dimulai ulang setelah kembali
-      } else if (label.contains('buka tutup bensin')) {
-                timer?.cancel(); // stop polling sebelum navigasi
+      // (opsional) bisa tambahkan trigger suara atau logika berdasarkan language
+
+      if (label.contains('buka kap mobil') && language == 'Indonesian') {
+        timer?.cancel();
 
         await Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => MyScreen2()),
+          MaterialPageRoute(builder: (_) => BukaKapIndo()),
         );
 
-        startPolling(); // polling dimulai ulang setelah kembali
+        startPolling();
+      } else if (label.contains('buka kap mobil') && language == 'English') {
+        timer?.cancel();
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => BukaKapEnglish()),
+        );
+
+        startPolling();
+      } else if (label.contains('buka kap mobil') && language == 'Japanese') {
+        timer?.cancel();
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => BukaKapJapan()),
+        );
+
+        startPolling();
+      } else if (label.contains('buka tutup bensin') &&
+          language == 'Indonesian') {
+        timer?.cancel();
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => BukaTutupIndo()),
+        );
+
+        startPolling();
+      } else if (label.contains('buka tutup bensin') && language == 'English') {
+        timer?.cancel();
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => BukaTutupEnglish()),
+        );
+
+        startPolling();
+      } else if (label.contains('buka tutup bensin') &&
+          language == 'Japanese') {
+        timer?.cancel();
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => BukaTutupJapan()),
+        );
+
+        startPolling();
       }
     }
   }
+
+  // Future<void> checkServer() async {
+  //   final response = await http.get(
+  //     Uri.parse("http://192.168.255.153:5000/task?poll=true"),
+  //   );
+  //   if (response.statusCode == 200) {
+  //     final data = jsonDecode(response.body);
+  //     final label = data['message'] ?? '';
+
+  //     if (label.contains('buka kap mobil')) {
+  //       timer?.cancel();
+
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => MyScreen1()),
+  //       );
+
+  //       startPolling();
+  //     } else if (label.contains('buka tutup bensin')) {
+  //       timer?.cancel();
+
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => MyScreen2()),
+  //       );
+
+  //       startPolling();
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {
     timer?.cancel();
     super.dispose();
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -154,13 +232,13 @@ Navigator.push(
                 child: IndexedStack(
                   index: _currentIndex,
                   children: [
-                  DashboardHomePage(
+                    DashboardHomePage(
                       navigationShell: widget.navigationShell,
                       height: maxHeight,
                       width: maxWidth,
                       parentPadding: parentPadding,
                     ),
-                    const Placeholder(), 
+                    const Placeholder(),
                   ],
                 ),
               ),
@@ -199,8 +277,7 @@ Navigator.push(
   }
 }
 
-
-  void _showPdfDialog(BuildContext context, String pdfAssetPath) {
+void _showPdfDialog(BuildContext context, String pdfAssetPath) {
   showDialog(
     context: context,
     builder: (context) => Dialog(
