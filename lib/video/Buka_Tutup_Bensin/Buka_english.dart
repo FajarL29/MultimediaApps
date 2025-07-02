@@ -15,7 +15,7 @@ class MyScreenState extends State<BukaTutupEnglish> {
   @override
   void initState() {
     super.initState();
-    player.open(Media('asset:///assets/video/BukaTutup_bensin_english.mp4'));
+    player.open(Media('asset:///assets/video/BukaTutupTangki_eng.mp4'));
   }
 
   @override

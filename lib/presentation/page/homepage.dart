@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
   int _currentIndex = 0;
   double parentPadding = 20;
   Timer? timer;
+  StreamSubscription? _labelSub;
 
   void _subscribeToFingerDetection() {
     fingerSub?.cancel();
@@ -98,88 +99,130 @@ class _HomePageState extends State<HomePage> with RouteAware {
   @override
   void initState() {
     super.initState();
-    startPolling();
-  }
 
-  void startPolling() {
-    timer = Timer.periodic(Duration(seconds: 2), (_) => checkServer());
-  }
-
-  Future<void> checkServer() async {
-    final response = await http.get(
-      Uri.parse("http://192.168.100.40:5000/task?poll=true"),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+    _labelSub = labelStreamController.stream.listen((data) async {
       final label = data['label'] ?? '';
       final language = data['language'] ?? '';
 
-      print('🆗 Polling dapat: label="$label", language="$language"');
+      print('🎬 Menerima label: $label ($language)');
 
-      if (label.isEmpty || language.isEmpty) return;
-
-      // (opsional) bisa tambahkan trigger suara atau logika berdasarkan language
-
-      if (label.contains('buka kap mobil') && language == 'Indonesian') {
-        timer?.cancel();
-
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BukaKapIndo()),
-        );
-
-        startPolling();
-      } else if (label.contains('buka kap mobil') && language == 'English') {
-        timer?.cancel();
-
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BukaKapEnglish()),
-        );
-
-        startPolling();
-      } else if (label.contains('buka kap mobil') && language == 'Japanese') {
-        timer?.cancel();
-
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BukaKapJapan()),
-        );
-
-        startPolling();
-      } else if (label.contains('buka tutup bensin') &&
-          language == 'Indonesian') {
-        timer?.cancel();
-
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BukaTutupIndo()),
-        );
-
-        startPolling();
-      } else if (label.contains('buka tutup bensin') && language == 'English') {
-        timer?.cancel();
-
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BukaTutupEnglish()),
-        );
-
-        startPolling();
-      } else if (label.contains('buka tutup bensin') &&
-          language == 'Japanese') {
-        timer?.cancel();
-
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BukaTutupJapan()),
-        );
-
-        startPolling();
+      if (label.contains('buka kap mobil')) {
+        if (language == 'Indonesian') {
+          await Navigator.push(
+              context, MaterialPageRoute(builder: (_) => const BukaKapIndo()));
+        } else if (language == 'English') {
+          await Navigator.push(
+              context, MaterialPageRoute(builder: (_) => BukaKapEnglish()));
+        } else if (language == 'Japanese') {
+          await Navigator.push(
+              context, MaterialPageRoute(builder: (_) => BukaKapJapan()));
+        }
+      } else if (label.contains('buka tutup bensin')) {
+        if (language == 'Indonesian') {
+          await Navigator.push(
+              context, MaterialPageRoute(builder: (_) => BukaTutupIndo()));
+        } else if (language == 'English') {
+          await Navigator.push(
+              context, MaterialPageRoute(builder: (_) => BukaTutupEnglish()));
+        } else if (language == 'Japanese') {
+          await Navigator.push(
+              context, MaterialPageRoute(builder: (_) => BukaTutupJapan()));
+        }
       }
-    }
+    });
   }
+
+  @override
+  void dispose() {
+    _labelSub?.cancel();
+    timer?.cancel();
+    super.dispose();
+  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   startPolling();
+  // }
+
+  // void startPolling() {
+  //   timer = Timer.periodic(Duration(seconds: 2), (_) => checkServer());
+  // }
+
+  // Future<void> checkServer() async {
+  //   final response = await http.get(
+  //     Uri.parse("http://192.168.100.40:5000/task?poll=true"),
+  //   );
+
+  //   if (response.statusCode == 200) {
+  //     final data = jsonDecode(response.body);
+  //     final label = data['label'] ?? '';
+  //     final language = data['language'] ?? '';
+
+  //     print('🆗 Polling dapat: label="$label", language="$language"');
+
+  //     if (label.isEmpty || language.isEmpty) return;
+
+  //     // (opsional) bisa tambahkan trigger suara atau logika berdasarkan language
+
+  //     if (label.contains('buka kap mobil') && language == 'Indonesian') {
+  //       timer?.cancel();
+
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => BukaKapIndo()),
+  //       );
+
+  //       startPolling();
+  //     } else if (label.contains('buka kap mobil') && language == 'English') {
+  //       timer?.cancel();
+
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => BukaKapEnglish()),
+  //       );
+
+  //       startPolling();
+  //     } else if (label.contains('buka kap mobil') && language == 'Japanese') {
+  //       timer?.cancel();
+
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => BukaKapJapan()),
+  //       );
+
+  //       startPolling();
+  //     } else if (label.contains('buka tutup bensin') &&
+  //         language == 'Indonesian') {
+  //       timer?.cancel();
+
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => BukaTutupIndo()),
+  //       );
+
+  //       startPolling();
+  //     } else if (label.contains('buka tutup bensin') && language == 'English') {
+  //       timer?.cancel();
+
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => BukaTutupEnglish()),
+  //       );
+
+  //       startPolling();
+  //     } else if (label.contains('buka tutup bensin') &&
+  //         language == 'Japanese') {
+  //       timer?.cancel();
+
+  //       await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => BukaTutupJapan()),
+  //       );
+
+  //       startPolling();
+  //     }
+  //   }
+  // }
 
   // Future<void> checkServer() async {
   //   final response = await http.get(
@@ -211,11 +254,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
   //   }
   // }
 
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   timer?.cancel();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
