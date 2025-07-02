@@ -132,21 +132,22 @@ class HeartRateService2 {
   }
 
   void _parseLine(String lineStr) {
-    if (lineStr.contains("Scanning Your Health Condition")) {
-      _fingerDetected = true;
-      _fingerDetectedController.add(true);
+    if (lineStr.contains("Scanning Your Health Condition") || lineStr.contains("Scanning BLE")) {
+  _fingerDetected = true;
+  _fingerDetectedController.add(true);
 
-      if (lineStr.contains("BLE")) {
-        _lastFingerMode = "BLE";
-        _fingerModeController.add("BLE");
-        log("🟢 Finger Detected: BLE");
-      } else {
-        _lastFingerMode = "NORMAL";
-        _fingerModeController.add("NORMAL");
-        log("🟢 Finger Detected: NORMAL");
-      }
-      return;
-    }
+  if (lineStr.contains("BLE")) {
+    _lastFingerMode = "BLE";
+    _fingerModeController.add("BLE");
+    log("🟢 Finger Detected: BLE");
+  } else {
+    _lastFingerMode = "NORMAL";
+    _fingerModeController.add("NORMAL");
+    log("🟢 Finger Detected: NORMAL");
+  }
+  return;
+}
+
 
     if (lineStr.contains("Letakkan jari di sensor")) {
       _fingerDetected = false;

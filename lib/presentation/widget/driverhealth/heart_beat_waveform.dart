@@ -111,7 +111,7 @@ class _HeartBeatWaveformState extends State<HeartBeatWaveform>
 
   @override
   void dispose() {
-    _controller.removeListener(_animationListener);
+    // _controller.dispose();
     _controller.dispose();
     _fingerDetectedSubscription.cancel();
     _heartRateSubscription.cancel();
