@@ -45,89 +45,89 @@ class ReadAirquality {
   Stream<int> get airQualityIndexStatus => _aqiController.stream;
 
 
-void startListening() {
-  try {
-    _port = SerialPort("COM10");
-    _port.openReadWrite();
-
-    _port.config = SerialPortConfig()
-      ..baudRate = 115200
-      ..bits = 8
-      ..stopBits = 1
-      ..parity = SerialPortParity.none
-      ..setFlowControl(SerialPortFlowControl.none);
-
-    _reader = SerialPortReader(_port);
-    _reader.stream.listen((data) {
-      log(String.fromCharCodes(data));
-      rawData += String.fromCharCodes(data);
-      processRawData();
-    });
-  } catch (e, s) {
-    print('Error during port setup: $e $s');
-  }
-}
-
-//   void startListening() {
+// void startListening() {
 //   try {
-//     final listPort = SerialPort.availablePorts;
-//     print('Available Ports: $listPort'); // Debugging
+//     _port = SerialPort("COM10");
+//     _port.openReadWrite();
 
-//     for (var port in listPort) {
-//       var p = SerialPort(port);
-//       print('Checking port: ${p.name}, Serial: ${p.serialNumber}');
-
-//       if (p.serialNumber == '5735016773') {
-//         _port = SerialPort(p.name!);
-//         p.close();
-//         break; // Exit loop once found
-//       }
-//     }
-
-//     if (_port == null) {
-//       print('❌ Error: Serial port not found!');
-//       return;
-//     }
-
-//     print('✅ Selected Port: ${_port.name}');
-
-//     if (!_port.openReadWrite()) {
-//       print('❌ Error: Failed to open port ${_port.name}');
-//       return;
-//     }
-
-//     print('✅ Port opened successfully.');
-
-//     final config = _port.config;
-//     config.baudRate = 115200;
-//     _port.config = config;
+//     _port.config = SerialPortConfig()
+//       ..baudRate = 115200
+//       ..bits = 8
+//       ..stopBits = 1
+//       ..parity = SerialPortParity.none
+//       ..setFlowControl(SerialPortFlowControl.none);
 
 //     _reader = SerialPortReader(_port);
-    
-//     // Check if _reader is successfully initialized
-//     if (_reader == null) {
-//       print('❌ Error: Failed to initialize SerialPortReader.');
-//       return;
-//     }
-
-//     print('🎧 Listening to stream...');
-    
 //     _reader.stream.listen((data) {
+//       log(String.fromCharCodes(data));
 //       rawData += String.fromCharCodes(data);
-//       log('DATA : $rawData');
-
 //       processRawData();
-//     }, onError: (error) {
-//       print('❌ Stream error: $error');
-//     }, onDone: () {
-//       print('✅ Stream closed.');
 //     });
-
-
-//   } catch (e) {
-//     print('❌ Exception during port setup: $e');
+//   } catch (e, s) {
+//     print('Error during port setup: $e $s');
 //   }
 // }
+
+  void startListening() {
+  try {
+    final listPort = SerialPort.availablePorts;
+    print('Available Ports: $listPort'); // Debugging
+
+    for (var port in listPort) {
+      var p = SerialPort(port);
+      print('Checking port: ${p.name}, Serial: ${p.serialNumber}');
+
+      if (p.serialNumber == '5629257603') {
+        _port = SerialPort(p.name!);
+        p.close();
+        break; // Exit loop once found
+      }
+    }
+
+    if (_port == null) {
+      print('❌ Error: Serial port not found!');
+      return;
+    }
+
+    print('✅ Selected Port: ${_port.name}');
+
+    if (!_port.openReadWrite()) {
+      print('❌ Error: Failed to open port ${_port.name}');
+      return;
+    }
+
+    print('✅ Port opened successfully.');
+
+    final config = _port.config;
+    config.baudRate = 115200;
+    _port.config = config;
+
+    _reader = SerialPortReader(_port);
+    
+    // Check if _reader is successfully initialized
+    if (_reader == null) {
+      print('❌ Error: Failed to initialize SerialPortReader.');
+      return;
+    }
+
+    print('🎧 Listening to stream...');
+    
+    _reader.stream.listen((data) {
+      rawData += String.fromCharCodes(data);
+      log('DATA : $rawData');
+
+      processRawData();
+    }, onError: (error) {
+      print('❌ Stream error: $error');
+    }, onDone: () {
+      print('✅ Stream closed.');
+    });
+
+
+  } catch (e) {
+    print('❌ Exception during port setup: $e');
+  }
+}
 
 
 void sendData(Map<String,dynamic> payload ) {

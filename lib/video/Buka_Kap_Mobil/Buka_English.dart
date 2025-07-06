@@ -41,7 +41,12 @@ class MyScreenState extends State<BukaKapEnglish> {
             left: 16.0,
             child: IconButton(
               icon: Icon(Icons.close_fullscreen_rounded, color: Colors.red),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+  if (mounted) {
+    Navigator.pop(context);
+  }
+},
+
               tooltip: 'Close',
             ),
           ),
