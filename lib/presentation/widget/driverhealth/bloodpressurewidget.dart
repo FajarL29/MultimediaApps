@@ -39,7 +39,7 @@ class BloodPressureWidget extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       color: const Color(0xFF213371).withOpacity(0.75),
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(45),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
