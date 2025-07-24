@@ -231,10 +231,10 @@ class _HeartRateAppState extends State<HeartRateApp> {
             ),
           ),
         ),
-        _actionButton("Reset Grafik", Icons.refresh, () async {
-          await FileStorageHelper.clearHealthData();
-          _chartKey.currentState?.resetChart();
-        }),
+        // _actionButton("Reset Grafik", Icons.refresh, () async {
+        //   await FileStorageHelper.clearHealthData();
+        //   _chartKey.currentState?.resetChart();
+        // }),
       ],
     );
   }

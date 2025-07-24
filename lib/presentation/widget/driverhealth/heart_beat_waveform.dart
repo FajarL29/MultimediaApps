@@ -28,7 +28,6 @@ class _HeartBeatWaveformState extends State<HeartBeatWaveform>
   late StreamSubscription<bool> _fingerDetectedSubscription;
   late StreamSubscription<int> _heartRateSubscription;
   late StreamSubscription<String> _fingerModeSubscription;
-  late VoidCallback _animationListener;
 
   bool _fingerDetected = false;
   String _fingerMode = "NONE";
@@ -54,25 +53,29 @@ class _HeartBeatWaveformState extends State<HeartBeatWaveform>
       vsync: this,
       duration: const Duration(milliseconds: 30),
     )..addListener(() {
-        if (!mounted) return;
-        setState(() => _generateECGWaveform());
+        if (mounted) {
+          setState(() {
+            _generateECGWaveform();
+          });
+        }
       });
 
-    _fingerDetectedSubscription =
-        widget.fingerDetectedStream.listen((detected) {
-      if (!mounted) return;
-      setState(() {
-        _fingerDetected = detected;
-        _handleAnimationLogic();
-      });
+    _fingerDetectedSubscription = widget.fingerDetectedStream.listen((detected) {
+      if (mounted) {
+        setState(() {
+          _fingerDetected = detected;
+          _handleAnimationLogic();
+        });
+      }
     });
 
     _fingerModeSubscription = widget.fingerModeStream.listen((mode) {
-      if (!mounted) return;
-      setState(() {
-        _fingerMode = mode;
-        _handleAnimationLogic();
-      });
+      if (mounted) {
+        setState(() {
+          _fingerMode = mode;
+          _handleAnimationLogic();
+        });
+      }
     });
 
     _heartRateSubscription = widget.heartRateStream.listen((bpm) {
@@ -82,15 +85,13 @@ class _HeartBeatWaveformState extends State<HeartBeatWaveform>
         _controller.duration = Duration(milliseconds: perStep.clamp(10, 100));
       }
     });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 300), _handleAnimationLogic);
-    });
   }
 
   void _handleAnimationLogic() {
     if (_fingerDetected && _fingerMode == "NORMAL") {
-      if (!_controller.isAnimating) _controller.repeat();
+      if (!_controller.isAnimating) {
+        _controller.repeat(); // Start the animation immediately
+      }
     } else {
       _controller.stop();
       _resetWaveform();
@@ -99,19 +100,25 @@ class _HeartBeatWaveformState extends State<HeartBeatWaveform>
 
   void _generateECGWaveform() {
     if (!_controller.isAnimating) return;
+
+    // Remove the first point to keep the array size constant
     _points.removeAt(0);
-    _points.add(_ecgPattern[_ecgIndex] * 4);
+
+    // Add the next point based on the ECG pattern
+    _points.add(_ecgPattern[_ecgIndex] * 4); // The multiplier adjusts the wave amplitude
+
+    // Move to the next point in the ECG pattern, looping back when we reach the end
     _ecgIndex = (_ecgIndex + 1) % _ecgPattern.length;
   }
 
   void _resetWaveform() {
+    // Reset waveform when animation stops
     _points = List.generate(maxPoints, (_) => 0.0);
     _ecgIndex = 0;
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_animationListener);
     _controller.dispose();
     _fingerDetectedSubscription.cancel();
     _heartRateSubscription.cancel();
@@ -152,24 +159,58 @@ class _WaveformPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.red
+      ..color = Colors.red // Color of ECG wave
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 
     final path = Path();
+
+    // Draw the ECG path based on the points
     for (int i = 0; i < points.length; i++) {
-      final x = (i / points.length) * size.width;
-      final y = size.height / 2 - points[i];
+      final x = (i / points.length) * size.width; // Spread points across the width of the canvas
+      final y = size.height / 2 - points[i]; // Position Y in the center of the canvas
+
       if (i == 0) {
-        path.moveTo(x, y);
+        path.moveTo(x, y); // Start the path at the first point
       } else {
-        path.lineTo(x, y);
+        path.lineTo(x, y); // Draw a line to the next point
       }
     }
 
+    // Draw the ECG path on the canvas
     canvas.drawPath(path, paint);
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
+
+
+// class _WaveformPainter extends CustomPainter {
+//   final List<double> points;
+//   _WaveformPainter(this.points);
+
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint = Paint()
+//       ..color = Colors.red
+//       ..strokeWidth = 2
+//       ..style = PaintingStyle.stroke;
+
+//     final path = Path();
+//     for (int i = 0; i < points.length; i++) {
+//       final x = (i / points.length) * size.width;
+//       final y = size.height / 2 - points[i];
+//       if (i == 0) {
+//         path.moveTo(x, y);
+//       } else {
+//         path.lineTo(x, y);
+//       }
+//     }
+
+//     canvas.drawPath(path, paint);
+//   }
+
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) => true;
+// }
