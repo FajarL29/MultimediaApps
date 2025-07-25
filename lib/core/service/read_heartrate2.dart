@@ -160,7 +160,7 @@ class HeartRateService2 {
     return;
   }
 
-  if (lineStr.contains("Letakkan jari di sensor")) {
+  if (lineStr.contains("Letakkan jari di")) {
     _fingerDetected = false;
     _lastFingerMode = "NONE";
     _fingerDetectedController.add(false);
