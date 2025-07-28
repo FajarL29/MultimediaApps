@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
+
 class FileStorageHelper {
   static const String _fileName = 'health_data.txt';
 
@@ -45,4 +46,38 @@ class FileStorageHelper {
       print('❌ Gagal menghapus data: $e');
     }
   }
+
+  static Future<void> saveDeviceStatus({
+  required bool isAirPurifierOn,
+  required bool isO2On,
+}) async {
+  final content = 'airPurifier:$isAirPurifierOn\no2:$isO2On';
+  final path = await _getFilePath();
+  final file = File(path);
+  await file.writeAsString(content);
+}
+
+static Future<Map<String, bool>> loadDeviceStatus() async {
+  try {
+    final path = await _getFilePath();
+    final file = File(path);
+    if (!await file.exists()) return {'airPurifier': false, 'o2': false};
+
+    final lines = await file.readAsLines();
+    final Map<String, bool> status = {'airPurifier': false, 'o2': false};
+
+    for (final line in lines) {
+      if (line.startsWith('airPurifier:')) {
+        status['airPurifier'] = line.split(':')[1] == 'true';
+      } else if (line.startsWith('o2:')) {
+        status['o2'] = line.split(':')[1] == 'true';
+      }
+    }
+    return status;
+  } catch (e) {
+    print('❌ Gagal membaca status perangkat: $e');
+    return {'airPurifier': false, 'o2': false};
+  }
+}
+
 }

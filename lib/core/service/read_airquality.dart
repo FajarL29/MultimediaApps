@@ -47,7 +47,7 @@ class ReadAirquality {
 
 // void startListening() {
 //   try {
-//     _port = SerialPort("COM10");
+//     _port = SerialPort("COM10"); 
 //     _port.openReadWrite();
 
 //     _port.config = SerialPortConfig()

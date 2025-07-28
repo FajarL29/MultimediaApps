@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multimedia_apps/core/service/file_stroge_helper.dart';
 import 'package:multimedia_apps/core/service/read_airquality.dart';
 import 'package:multimedia_apps/presentation/widget/airquality/airqualitywidget.dart';
+
 
 class AirQualityApp extends StatefulWidget {
   const AirQualityApp({super.key});
@@ -27,10 +29,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
   int _currentAqi = 0;
 
   String getAirPurifierStatus() {
-    if (_currentco > 9 ||
-        _currentco2 > 600 ||
-        _currentpm25 > 20 ||
-        _currentpm10 > 20) {
+    if (_currentco > 9 || _currentco2 > 600 || _currentpm25 > 20 || _currentpm10 > 20) {
       return 'ON';
     }
     return 'OFF';
@@ -43,32 +42,37 @@ class _AirQualityAppState extends State<AirQualityApp> {
     return 'OFF';
   }
 
-  void toggleDevice(String deviceType) {
-    if (deviceType == 'Air Purifier' || deviceType == 'Both') {
-      bool newState = !isAirPurifierOn;
-      _airqualityService.sendData({
-        'action': newState ? 'turn_on_relay' : 'turn_off_relay',
-        'relay_code': '6',
-      });
-      setState(() {
-        isAirPurifierOn = newState;
-      });
-    }
-
-    if (deviceType == 'O2 Concentrator' || deviceType == 'Both') {
-      bool newState = !isO2On;
-      _airqualityService.sendData({
-        'action': newState ? 'turn_on_relay' : 'turn_off_relay',
-        'relay_code': '5',
-      });
-      setState(() {
-        isO2On = newState;
-      });
-    }
-
-    // Optional: logika tambahan jika kedua perangkat aktif
-    if (isAirPurifierOn && isO2On) {}
+ void toggleDevice(String deviceType) {
+  if (deviceType == 'Air Purifier' || deviceType == 'Both') {
+    bool newState = !isAirPurifierOn;
+    _airqualityService.sendData({
+      'action': newState ? 'turn_on_relay' : 'turn_off_relay',
+      'relay_code': '6',
+    });
+    setState(() {
+      isAirPurifierOn = newState;
+    });
   }
+
+  if (deviceType == 'O2 Concentrator' || deviceType == 'Both') {
+    bool newState = !isO2On;
+    _airqualityService.sendData({
+      'action': newState ? 'turn_on_relay' : 'turn_off_relay',
+      'relay_code': '5',
+    });
+    setState(() {
+      isO2On = newState;
+    });
+  }
+
+  // Optional: logika tambahan jika kedua perangkat aktif
+  if (isAirPurifierOn && isO2On) {
+  }
+  FileStorageHelper.saveDeviceStatus(
+    isAirPurifierOn: isAirPurifierOn,
+    isO2On: isO2On,
+  );
+}
 
   @override
   void initState() {
@@ -103,7 +107,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
     _airqualityService.humStream.listen((hum) {
       setState(() => _currenthum = hum.toDouble());
     });
-
+    
     _airqualityService.co2RelayStatus.listen((cor) {
       setState(() => _currentCor = cor);
     });
@@ -116,6 +120,12 @@ class _AirQualityAppState extends State<AirQualityApp> {
       setState(() => _currentAqi = aqi);
       //print("status $_currentAqi");
     });
+     FileStorageHelper.loadDeviceStatus().then((status) {
+    setState(() {
+      isAirPurifierOn = status['airPurifier'] ?? false;
+      isO2On = status['o2'] ?? false;
+    });
+  });
   }
 
   @override
@@ -136,24 +146,24 @@ class _AirQualityAppState extends State<AirQualityApp> {
               children: [
                 // Header with app bar
                 _buildAppBar(),
-
+                
                 const SizedBox(height: 20),
-
+                
                 // Status Dashboard Card
                 _buildStatusDashboard(),
-
+                
                 const SizedBox(height: 20),
-
+                
                 // Pollutant Readings Section
                 _buildPollutantReadings(),
-
+                
                 const SizedBox(height: 20),
-
+                
                 // Air Quality Gauge
                 _buildAirQualityGauge(),
-
+                
                 const SizedBox(height: 20),
-
+                
                 // Device Controls
                 _buildDeviceControls(),
               ],
@@ -173,7 +183,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
           IconButton(
             onPressed: () => context.pop(),
             icon: const Icon(
-              Icons.arrow_back_ios_rounded,
+              Icons.arrow_back_ios_rounded, 
               color: Colors.white,
               size: 22,
             ),
@@ -202,7 +212,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
               // Add refresh functionality if needed
             },
             icon: const Icon(
-              Icons.refresh_rounded,
+              Icons.refresh_rounded, 
               color: Colors.white,
               size: 22,
             ),
@@ -220,12 +230,12 @@ class _AirQualityAppState extends State<AirQualityApp> {
 
   Widget _buildStatusDashboard() {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12), 
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+                  decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -322,15 +332,18 @@ class _AirQualityAppState extends State<AirQualityApp> {
     return Colors.green;
   }
 
-  Widget _buildEnvironmentCard(String title, String value, String iconPath,
-      String status, Color statusColor) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+  Widget _buildEnvironmentCard(String title, String value, String iconPath, String status, Color statusColor) {
+    return
+    
+    ClipRRect(
+      borderRadius: BorderRadius.circular(12), 
+
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+
+      child: Container(
+      padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -381,9 +394,9 @@ class _AirQualityAppState extends State<AirQualityApp> {
               ),
             ],
           ),
-        ),
-      ),
-    );
+             ),
+       ),
+     );
   }
 
   Widget _buildPollutantReadings() {
@@ -408,37 +421,17 @@ class _AirQualityAppState extends State<AirQualityApp> {
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(
-                  child: _buildPollutantCard(
-                      "CO",
-                      _currentco.toStringAsFixed(1),
-                      "ppm",
-                      _getPollutantStatus(_currentco, 9))),
+              Expanded(child: _buildPollutantCard("CO", _currentco.toStringAsFixed(1), "ppm", _getPollutantStatus(_currentco, 9))),
               const SizedBox(width: 8),
-              Expanded(
-                  child: _buildPollutantCard(
-                      "CO₂",
-                      _currentco2.toStringAsFixed(0),
-                      "ppm",
-                      _getPollutantStatus(_currentco2, 600))),
+              Expanded(child: _buildPollutantCard("CO₂", _currentco2.toStringAsFixed(0), "ppm", _getPollutantStatus(_currentco2, 600))),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                  child: _buildPollutantCard(
-                      "PM2.5",
-                      _currentpm25.toStringAsFixed(1),
-                      "μg/m³",
-                      _getPollutantStatus(_currentpm25, 20))),
+              Expanded(child: _buildPollutantCard("PM2.5", _currentpm25.toStringAsFixed(1), "μg/m³", _getPollutantStatus(_currentpm25, 20))),
               const SizedBox(width: 8),
-              Expanded(
-                  child: _buildPollutantCard(
-                      "PM10",
-                      _currentpm10.toStringAsFixed(1),
-                      "μg/m³",
-                      _getPollutantStatus(_currentpm10, 20))),
+              Expanded(child: _buildPollutantCard("PM10", _currentpm10.toStringAsFixed(1), "μg/m³", _getPollutantStatus(_currentpm10, 20))),
             ],
           ),
         ],
@@ -458,8 +451,7 @@ class _AirQualityAppState extends State<AirQualityApp> {
     }
   }
 
-  Widget _buildPollutantCard(
-      String title, String value, String unit, PollutantStatus status) {
+  Widget _buildPollutantCard(String title, String value, String unit, PollutantStatus status) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -545,48 +537,47 @@ class _AirQualityAppState extends State<AirQualityApp> {
           const SizedBox(height: 16),
           // Use your existing gauge widget here
           AQGaugeWidget(
-            aqvalue: _currentAqi,
-            gaugetitle: 'Air Quality Index',
-          ),
+          aqvalue: _currentAqi,
+          gaugetitle: 'Air Quality Index',
+        ),
         ],
       ),
     );
   }
 
   Widget _buildDeviceControls() {
-    final bool shouldRecommendPurifier =
-        getAirPurifierStatus() == 'ON' && !isAirPurifierOn;
-    final bool shouldRecommendO2 = getO2ConcentratorStatus() == 'ON' && !isO2On;
+  final bool shouldRecommendPurifier = getAirPurifierStatus() == 'ON' && !isAirPurifierOn;
+  final bool shouldRecommendO2 = getO2ConcentratorStatus() == 'ON' && !isO2On;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: _buildDeviceControlCard(
-            "Air Purifier",
-            "assets/images/airpurifier.png",
-            isAirPurifierOn,
-            shouldRecommendPurifier,
-            () => toggleDevice('Air Purifier'),
-          ),
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Expanded(
+        child: _buildDeviceControlCard(
+          "Air Purifier",
+          "assets/images/airpurifier.png",
+          isAirPurifierOn,
+          shouldRecommendPurifier,
+          () => toggleDevice('Air Purifier'),
         ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildDeviceControlCard(
-            "O2 Concentrator",
-            "assets/images/o2concentrator.png",
-            isO2On,
-            shouldRecommendO2,
-            () => toggleDevice('O2 Concentrator'),
-          ),
+      ),
+      const SizedBox(width: 16),
+      Expanded(
+        child: _buildDeviceControlCard(
+          "O2 Concentrator",
+          "assets/images/o2concentrator.png",
+          isO2On,
+          shouldRecommendO2,
+          () => toggleDevice('O2 Concentrator'),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
-  Widget _buildDeviceControlCard(String title, String iconPath, bool isActive,
-      bool isRecommended, VoidCallback onToggle) {
+
+  Widget _buildDeviceControlCard(String title, String iconPath, bool isActive, bool isRecommended, VoidCallback onToggle) {
     return GestureDetector(
       onTap: onToggle,
       child: Container(
@@ -595,15 +586,15 @@ class _AirQualityAppState extends State<AirQualityApp> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isActive
+            colors: isActive 
                 ? [Color(0xFF40c057), Color(0xFF2b9348)]
                 : [Color(0xFF495057), Color(0xFF343a40)],
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: isActive
-                  ? Color(0xFF40c057).withOpacity(0.3)
+              color: isActive 
+                  ? Color(0xFF40c057).withOpacity(0.3) 
                   : Colors.black.withOpacity(0.2),
               blurRadius: 10,
               offset: const Offset(0, 5),
@@ -646,8 +637,8 @@ class _AirQualityAppState extends State<AirQualityApp> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isActive
-                        ? Colors.white.withOpacity(0.2)
+                    color: isActive 
+                        ? Colors.white.withOpacity(0.2) 
                         : Colors.white.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -696,8 +687,8 @@ class _AirQualityAppState extends State<AirQualityApp> {
       height: 26,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: isActive
-            ? Colors.white.withOpacity(0.3)
+        color: isActive 
+            ? Colors.white.withOpacity(0.3) 
             : Colors.white.withOpacity(0.1),
       ),
       child: Stack(
@@ -722,25 +713,25 @@ class _AirQualityAppState extends State<AirQualityApp> {
   }
 
   void _showAbnormalPopup(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text("OK"),
+        ),
+      ],
+    ),
+  );
+}
 }
 
 class PollutantStatus {
   final Color color;
   final String message;
-
+  
   PollutantStatus(this.color, this.message);
 }
